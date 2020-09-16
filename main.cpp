@@ -1,6 +1,6 @@
 #include "HAL/hal.h"
 #include "libs/myLib.h"
-#include "mpu9250/mpu9250.h"
+#include "icm20948/icm20948.h"
 #include "serialPort/uartHW.h"
 
 static uint64_t timestamp;
@@ -28,7 +28,7 @@ extern "C" {
  */
 int main(void)
 {
-    MPU9250& mpu = MPU9250::GetI();
+    ICM20948& mpu = ICM20948::GetI();
 
     //  Initialize board and FPU
     HAL_BOARD_CLOCK_Init();
@@ -44,12 +44,6 @@ int main(void)
     //  Either configure registers for direct sensor readings or load DMP
     //  firmware
     mpu.InitSW();
-
-#ifdef __HAL_USE_MPU9250_NODMP__
-    //  Set AHRS time step to 1kHz and configure gains
-    // Settings in mpu.InitSW(); are using 200MHz data sampling rate
-    mpu.SetupAHRS(0.005, 0.5, 0.00);
-#endif  /* __HAL_USE_MPU9250_NODMP__ */
 
     float rpy[3];
     uint32_t counter = 0;

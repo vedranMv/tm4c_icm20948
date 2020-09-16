@@ -4,9 +4,9 @@
  *  Created on: 25. 3. 2015.
  *      Author: Vedran
  */
-#include "mpu9250.h"
+#include "icm20948.h"
 
-#if defined(__HAL_USE_MPU9250_DMP__)       //  Compile only if module is enabled
+#if defined(__HAL_USE_ICM20948_DMP__)       //  Compile only if module is enabled
 
 #include "HAL/hal.h"
 #include "libs/myLib.h"
@@ -100,7 +100,7 @@ static uint32_t enabled_sensor_mask = 0;
 
 inv_bool_t interface_is_SPI(void)
 {
-#ifdef __HAL_USE_MPU9250_DMP__
+#ifdef __HAL_USE_ICM20948_SPI__
     return true;
 #else
     return false;
@@ -168,34 +168,34 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
         case INV_SENSOR_TYPE_GYROSCOPE:
             memcpy(event.data.gyr.vect, data, sizeof(event.data.gyr.vect));
             memcpy(&(event.data.gyr.accuracy_flag), arg, sizeof(event.data.gyr.accuracy_flag));
-            memcpy((void*)MPU9250::GetI()._gyro, event.data.gyr.vect, sizeof(event.data.gyr.vect));
+            memcpy((void*)ICM20948::GetI()._gyro, event.data.gyr.vect, sizeof(event.data.gyr.vect));
             break;
         case INV_SENSOR_TYPE_GRAVITY:
             memcpy(event.data.acc.vect, data, sizeof(event.data.acc.vect));
             event.data.acc.accuracy_flag = inv_icm20948_get_accel_accuracy();
-            memcpy((void*)MPU9250::GetI()._gv, event.data.acc.vect, sizeof(event.data.acc.vect));
+            memcpy((void*)ICM20948::GetI()._gv, event.data.acc.vect, sizeof(event.data.acc.vect));
             break;
         case INV_SENSOR_TYPE_LINEAR_ACCELERATION:
         case INV_SENSOR_TYPE_ACCELEROMETER:
             memcpy(event.data.acc.vect, data, sizeof(event.data.acc.vect));
             memcpy(&(event.data.acc.accuracy_flag), arg, sizeof(event.data.acc.accuracy_flag));
-            memcpy((void*)MPU9250::GetI()._acc, event.data.acc.vect, sizeof(event.data.acc.vect));
+            memcpy((void*)ICM20948::GetI()._acc, event.data.acc.vect, sizeof(event.data.acc.vect));
             break;
         case INV_SENSOR_TYPE_MAGNETOMETER:
             memcpy(event.data.mag.vect, data, sizeof(event.data.mag.vect));
             memcpy(&(event.data.mag.accuracy_flag), arg, sizeof(event.data.mag.accuracy_flag));
-            memcpy((void*)MPU9250::GetI()._mag, event.data.mag.vect, sizeof(event.data.mag.vect));
+            memcpy((void*)ICM20948::GetI()._mag, event.data.mag.vect, sizeof(event.data.mag.vect));
             break;
         case INV_SENSOR_TYPE_GEOMAG_ROTATION_VECTOR:
         case INV_SENSOR_TYPE_ROTATION_VECTOR:
             memcpy(&(event.data.quaternion.accuracy), arg, sizeof(event.data.quaternion.accuracy));
             memcpy(event.data.quaternion.quat, data, sizeof(event.data.quaternion.quat));
-            //memcpy((void*)MPU9250::GetI()._quat, event.data.quaternion.quat, sizeof(event.data.quaternion.quat));
+            //memcpy((void*)ICM20948::GetI()._quat, event.data.quaternion.quat, sizeof(event.data.quaternion.quat));
             break;
         case INV_SENSOR_TYPE_GAME_ROTATION_VECTOR:
             memcpy(event.data.quaternion.quat, data, sizeof(event.data.quaternion.quat));
             event.data.quaternion.accuracy_flag = icm20948_get_grv_accuracy();
-            memcpy((void*)MPU9250::GetI()._quat, event.data.quaternion.quat, sizeof(event.data.quaternion.quat));
+            memcpy((void*)ICM20948::GetI()._quat, event.data.quaternion.quat, sizeof(event.data.quaternion.quat));
             break;
         case INV_SENSOR_TYPE_BAC:
             memcpy(&(event.data.bac.event), data, sizeof(event.data.bac.event));
@@ -268,9 +268,9 @@ static enum inv_icm20948_sensor idd_sensortype_conversion(int sensor)
  * Return reference to a singleton
  * @return reference to an internal static instance
  */
-MPU9250& MPU9250::GetI()
+ICM20948& ICM20948::GetI()
 {
-    static MPU9250 singletonInstance;
+    static ICM20948 singletonInstance;
     return singletonInstance;
 }
 
@@ -278,9 +278,9 @@ MPU9250& MPU9250::GetI()
  * Return pointer to a singleton
  * @return pointer to a internal static instance
  */
-MPU9250* MPU9250::GetP()
+ICM20948* ICM20948::GetP()
 {
-    return &(MPU9250::GetI());
+    return &(ICM20948::GetI());
 }
 
 ///-----------------------------------------------------------------------------
@@ -295,7 +295,7 @@ MPU9250* MPU9250::GetP()
  * push-pull pin with weak pull down and 10mA strength).
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::InitHW()
+int8_t ICM20948::InitHW()
 {
     HAL_MPU_Init();
     HAL_MPU_PowerSwitch(true);
@@ -308,7 +308,7 @@ int8_t MPU9250::InitHW()
  * any software initialization, this function power-cycles the board
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::InitSW()
+int8_t ICM20948::InitSW()
 {
 
     //  Power cycle MPU chip on every SW initialization
@@ -484,7 +484,7 @@ int8_t MPU9250::InitSW()
  * register. Wait for 50ms afterwards for sensor to start up.
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::Reset()
+int8_t ICM20948::Reset()
 {
     //HAL_MPU_WriteByte(MPU9250_ADDRESS, PWR_MGMT_1, 1 << 7);
     HAL_DelayUS(50000);
@@ -498,7 +498,7 @@ int8_t MPU9250::Reset()
  * @param en Power state
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::Enabled(bool en)
+int8_t ICM20948::Enabled(bool en)
 {
     HAL_MPU_PowerSwitch(en);
 
@@ -510,21 +510,9 @@ int8_t MPU9250::Enabled(bool en)
  * @return true if new sensor data is available
  *        false otherwise
  */
-bool MPU9250::IsDataReady()
+bool ICM20948::IsDataReady()
 {
     return HAL_MPU_DataAvail();
-}
-
-/**
- * Get ID from MPU, should always return 0x71
- * @return ID value stored in MPU's register
- */
-uint8_t MPU9250::GetID()
-{
-    uint8_t ID=00;
-    //ID = HAL_MPU_ReadByte(MPU9250_ADDRESS, WHO_AM_I_MPU9250);
-
-    return ID;
 }
 
 /**
@@ -533,7 +521,7 @@ uint8_t MPU9250::GetID()
  * vector & roll-pitch-yaw
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::ReadSensorData()
+int8_t ICM20948::ReadSensorData()
 {
     int8_t retVal = MPU_ERROR;
 
@@ -548,7 +536,7 @@ int8_t MPU9250::ReadSensorData()
  * @param inDeg if true RPY returned in degrees, if false in radians
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::RPY(float* RPY, bool inDeg)
+int8_t ICM20948::RPY(float* RPY, bool inDeg)
 {
     Quaternion qt;
     qt.x = _quat[1];
@@ -559,7 +547,7 @@ int8_t MPU9250::RPY(float* RPY, bool inDeg)
     VectorFloat v;
     dmp_GetGravity(&v, &qt);
 
-    dmp_GetYawPitchRoll((float*)(MPU9250::GetI()._ypr), &qt, &v);
+    dmp_GetYawPitchRoll((float*)(ICM20948::GetI()._ypr), &qt, &v);
 
     for (uint8_t i = 0; i < 3; i++)
         if (inDeg)
@@ -576,7 +564,7 @@ int8_t MPU9250::RPY(float* RPY, bool inDeg)
  *        data
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::Acceleration(float *acc)
+int8_t ICM20948::Acceleration(float *acc)
 {
     memcpy((void*)acc, (void*)_acc, sizeof(float)*3);
     acc[0] *= GRAVITY_CONST;
@@ -592,7 +580,7 @@ int8_t MPU9250::Acceleration(float *acc)
  *        data
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::Gyroscope(float *gyro)
+int8_t ICM20948::Gyroscope(float *gyro)
 {
     memcpy((void*)gyro, (void*)_gyro, sizeof(float)*3);
 
@@ -605,14 +593,14 @@ int8_t MPU9250::Gyroscope(float *gyro)
  *        strength data
  * @return One of MPU_* error codes
  */
-int8_t MPU9250::Magnetometer(float *mag)
+int8_t ICM20948::Magnetometer(float *mag)
 {
     memcpy((void*)mag, (void*)_mag, sizeof(float)*3);
 
     return MPU_SUCCESS;
 }
 
-int8_t MPU9250::Gravity(float *gv)
+int8_t ICM20948::Gravity(float *gv)
 {
     memcpy((void*)gv, (void*)_gv, sizeof(float)*3);
 
@@ -624,7 +612,7 @@ int8_t MPU9250::Gravity(float *gv)
 ///                      Class constructor & destructor              [PROTECTED]
 ///-----------------------------------------------------------------------------
 
-MPU9250::MPU9250() :  dT(0), _magEn(true)
+ICM20948::ICM20948() :  dT(0), _magEn(true)
 {
     //  Initialize arrays
     memset((void*)_ypr, 0, 3);
@@ -633,7 +621,7 @@ MPU9250::MPU9250() :  dT(0), _magEn(true)
     memset((void*)_mag, 0, 3);
 }
 
-MPU9250::~MPU9250()
+ICM20948::~ICM20948()
 {}
 
 #endif  /* __HAL_USE_MPU9250_DMP__ */

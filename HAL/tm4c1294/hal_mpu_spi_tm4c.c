@@ -11,7 +11,7 @@
  */
 #include "hal_mpu_tm4c.h"
 
-#if defined(__HAL_USE_MPU9250_SPI__)       //  Compile only if module is enabled
+#if defined(__HAL_USE_ICM20948_SPI__)       //  Compile only if module is enabled
 
 #include "libs/myLib.h"
 #include "HAL/tm4c1294/hal_common_tm4c.h"
@@ -33,8 +33,8 @@
 #include "driverlib/timer.h"
 
 
-/**     MPU9250 - related macros        */
-#define MPU9250_SPI_BASE SSI2_BASE
+/**     ICM20948 - related macros        */
+#define ICM20948_SPI_BASE SSI2_BASE
 
 /**
  * Initializes SPI2 bus for communication with MPU
@@ -227,4 +227,4 @@ int HAL_MPU_ReadBytes(void * context, uint8_t regAddress,
     return 0;
 }
 
-#endif /* __HAL_USE_MPU9250_SPI__ */
+#endif /* __HAL_USE_ICM20948_SPI__ */

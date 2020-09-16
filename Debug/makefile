@@ -16,33 +16,31 @@ ORDERED_OBJS += \
 "./HAL/tm4c1294/hal_common_tm4c.obj" \
 "./HAL/tm4c1294/hal_mpu_i2c_tm4c.obj" \
 "./HAL/tm4c1294/hal_mpu_spi_tm4c.obj" \
+"./icm20948/Invn/Devices/Drivers/Ak0991x/Ak0991x.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948Augmented.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948AuxCompassAkm.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948AuxTransport.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948DataBaseControl.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948DataBaseDriver.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948DataConverter.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948Dmp3Driver.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948LoadFirmware.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948MPUFifoControl.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948SelfTest.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948Setup.obj" \
+"./icm20948/Invn/Devices/Drivers/ICM20948/Icm20948Transport.obj" \
+"./icm20948/Invn/Devices/Sensor.obj" \
+"./icm20948/Invn/DynamicProtocol/DynProtocol.obj" \
+"./icm20948/Invn/DynamicProtocol/DynProtocolTransportUart.obj" \
+"./icm20948/Invn/EmbUtils/DataConverter.obj" \
+"./icm20948/Invn/EmbUtils/ErrorHelper.obj" \
+"./icm20948/Invn/EmbUtils/InvProtocol.obj" \
+"./icm20948/Invn/EmbUtils/InvQueue.obj" \
+"./icm20948/Invn/EmbUtils/InvScheduler.obj" \
+"./icm20948/Invn/EmbUtils/Message.obj" \
+"./icm20948/Invn/EmbUtils/RingByteBuffer.obj" \
+"./icm20948/icm20948_dmp.obj" \
 "./libs/myLib.obj" \
-"./mpu9250/Invn/Devices/Drivers/Ak0991x/Ak0991x.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948Augmented.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948AuxCompassAkm.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948AuxTransport.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948DataBaseControl.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948DataBaseDriver.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948DataConverter.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948Dmp3Driver.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948LoadFirmware.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948MPUFifoControl.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948SelfTest.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948Setup.obj" \
-"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948Transport.obj" \
-"./mpu9250/Invn/Devices/Sensor.obj" \
-"./mpu9250/Invn/DynamicProtocol/DynProtocol.obj" \
-"./mpu9250/Invn/DynamicProtocol/DynProtocolTransportUart.obj" \
-"./mpu9250/Invn/EmbUtils/DataConverter.obj" \
-"./mpu9250/Invn/EmbUtils/ErrorHelper.obj" \
-"./mpu9250/Invn/EmbUtils/InvProtocol.obj" \
-"./mpu9250/Invn/EmbUtils/InvQueue.obj" \
-"./mpu9250/Invn/EmbUtils/InvScheduler.obj" \
-"./mpu9250/Invn/EmbUtils/Message.obj" \
-"./mpu9250/Invn/EmbUtils/RingByteBuffer.obj" \
-"./mpu9250/MahonyAHRS.obj" \
-"./mpu9250/api_mpu9250.obj" \
-"./mpu9250/dmp_mpu9250.obj" \
 "./serialPort/uartHW.obj" \
 "../tm4c1294ncpdt.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -58,23 +56,23 @@ RMDIR := RMDIR /S/Q
 -include sources.mk
 -include subdir_vars.mk
 -include HAL/tm4c1294/subdir_vars.mk
+-include icm20948/Invn/Devices/Drivers/Ak0991x/subdir_vars.mk
+-include icm20948/Invn/Devices/Drivers/ICM20948/subdir_vars.mk
+-include icm20948/Invn/Devices/subdir_vars.mk
+-include icm20948/Invn/DynamicProtocol/subdir_vars.mk
+-include icm20948/Invn/EmbUtils/subdir_vars.mk
+-include icm20948/subdir_vars.mk
 -include libs/subdir_vars.mk
--include mpu9250/Invn/Devices/Drivers/Ak0991x/subdir_vars.mk
--include mpu9250/Invn/Devices/Drivers/ICM20948/subdir_vars.mk
--include mpu9250/Invn/Devices/subdir_vars.mk
--include mpu9250/Invn/DynamicProtocol/subdir_vars.mk
--include mpu9250/Invn/EmbUtils/subdir_vars.mk
--include mpu9250/subdir_vars.mk
 -include serialPort/subdir_vars.mk
 -include subdir_rules.mk
 -include HAL/tm4c1294/subdir_rules.mk
+-include icm20948/Invn/Devices/Drivers/Ak0991x/subdir_rules.mk
+-include icm20948/Invn/Devices/Drivers/ICM20948/subdir_rules.mk
+-include icm20948/Invn/Devices/subdir_rules.mk
+-include icm20948/Invn/DynamicProtocol/subdir_rules.mk
+-include icm20948/Invn/EmbUtils/subdir_rules.mk
+-include icm20948/subdir_rules.mk
 -include libs/subdir_rules.mk
--include mpu9250/Invn/Devices/Drivers/Ak0991x/subdir_rules.mk
--include mpu9250/Invn/Devices/Drivers/ICM20948/subdir_rules.mk
--include mpu9250/Invn/Devices/subdir_rules.mk
--include mpu9250/Invn/DynamicProtocol/subdir_rules.mk
--include mpu9250/Invn/EmbUtils/subdir_rules.mk
--include mpu9250/subdir_rules.mk
 -include serialPort/subdir_rules.mk
 -include objects.mk
 
@@ -206,11 +204,11 @@ tm4c_icm20948.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "tm4c1294ncpdt_startup_ccs.obj" "uartstdio.obj" "HAL\tm4c1294\hal_common_tm4c.obj" "HAL\tm4c1294\hal_mpu_i2c_tm4c.obj" "HAL\tm4c1294\hal_mpu_spi_tm4c.obj" "libs\myLib.obj" "mpu9250\Invn\Devices\Drivers\Ak0991x\Ak0991x.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Augmented.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948AuxCompassAkm.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948AuxTransport.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseControl.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseDriver.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataConverter.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Dmp3Driver.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948LoadFirmware.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948MPUFifoControl.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948SelfTest.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Setup.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Transport.obj" 
-	-$(RM) "mpu9250\Invn\Devices\Sensor.obj" "mpu9250\Invn\DynamicProtocol\DynProtocol.obj" "mpu9250\Invn\DynamicProtocol\DynProtocolTransportUart.obj" "mpu9250\Invn\EmbUtils\DataConverter.obj" "mpu9250\Invn\EmbUtils\ErrorHelper.obj" "mpu9250\Invn\EmbUtils\InvProtocol.obj" "mpu9250\Invn\EmbUtils\InvQueue.obj" "mpu9250\Invn\EmbUtils\InvScheduler.obj" "mpu9250\Invn\EmbUtils\Message.obj" "mpu9250\Invn\EmbUtils\RingByteBuffer.obj" "mpu9250\MahonyAHRS.obj" "mpu9250\api_mpu9250.obj" "mpu9250\dmp_mpu9250.obj" "serialPort\uartHW.obj" 
-	-$(RM) "tm4c1294ncpdt_startup_ccs.d" "uartstdio.d" "HAL\tm4c1294\hal_common_tm4c.d" "HAL\tm4c1294\hal_mpu_i2c_tm4c.d" "HAL\tm4c1294\hal_mpu_spi_tm4c.d" "libs\myLib.d" "mpu9250\Invn\Devices\Drivers\Ak0991x\Ak0991x.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Augmented.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948AuxCompassAkm.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948AuxTransport.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseControl.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseDriver.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataConverter.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Dmp3Driver.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948LoadFirmware.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948MPUFifoControl.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948SelfTest.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Setup.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Transport.d" "mpu9250\Invn\Devices\Sensor.d" "mpu9250\Invn\DynamicProtocol\DynProtocol.d" 
-	-$(RM) "mpu9250\Invn\DynamicProtocol\DynProtocolTransportUart.d" "mpu9250\Invn\EmbUtils\DataConverter.d" "mpu9250\Invn\EmbUtils\ErrorHelper.d" "mpu9250\Invn\EmbUtils\InvProtocol.d" "mpu9250\Invn\EmbUtils\InvQueue.d" "mpu9250\Invn\EmbUtils\InvScheduler.d" "mpu9250\Invn\EmbUtils\Message.d" "mpu9250\Invn\EmbUtils\RingByteBuffer.d" "mpu9250\api_mpu9250.d" 
-	-$(RM) "main.d" "mpu9250\MahonyAHRS.d" "mpu9250\dmp_mpu9250.d" "serialPort\uartHW.d" 
+	-$(RM) "main.obj" "tm4c1294ncpdt_startup_ccs.obj" "uartstdio.obj" "HAL\tm4c1294\hal_common_tm4c.obj" "HAL\tm4c1294\hal_mpu_i2c_tm4c.obj" "HAL\tm4c1294\hal_mpu_spi_tm4c.obj" "icm20948\Invn\Devices\Drivers\Ak0991x\Ak0991x.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948Augmented.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948AuxCompassAkm.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948AuxTransport.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseControl.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseDriver.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948DataConverter.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948Dmp3Driver.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948LoadFirmware.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948MPUFifoControl.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948SelfTest.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948Setup.obj" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948Transport.obj" "icm20948\Invn\Devices\Sensor.obj" 
+	-$(RM) "icm20948\Invn\DynamicProtocol\DynProtocol.obj" "icm20948\Invn\DynamicProtocol\DynProtocolTransportUart.obj" "icm20948\Invn\EmbUtils\DataConverter.obj" "icm20948\Invn\EmbUtils\ErrorHelper.obj" "icm20948\Invn\EmbUtils\InvProtocol.obj" "icm20948\Invn\EmbUtils\InvQueue.obj" "icm20948\Invn\EmbUtils\InvScheduler.obj" "icm20948\Invn\EmbUtils\Message.obj" "icm20948\Invn\EmbUtils\RingByteBuffer.obj" "icm20948\icm20948_dmp.obj" "libs\myLib.obj" "serialPort\uartHW.obj" 
+	-$(RM) "tm4c1294ncpdt_startup_ccs.d" "uartstdio.d" "HAL\tm4c1294\hal_common_tm4c.d" "HAL\tm4c1294\hal_mpu_i2c_tm4c.d" "HAL\tm4c1294\hal_mpu_spi_tm4c.d" "icm20948\Invn\Devices\Drivers\Ak0991x\Ak0991x.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948Augmented.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948AuxCompassAkm.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948AuxTransport.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseControl.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseDriver.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948DataConverter.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948Dmp3Driver.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948LoadFirmware.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948MPUFifoControl.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948SelfTest.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948Setup.d" "icm20948\Invn\Devices\Drivers\ICM20948\Icm20948Transport.d" "icm20948\Invn\Devices\Sensor.d" "icm20948\Invn\DynamicProtocol\DynProtocol.d" 
+	-$(RM) "icm20948\Invn\DynamicProtocol\DynProtocolTransportUart.d" "icm20948\Invn\EmbUtils\DataConverter.d" "icm20948\Invn\EmbUtils\ErrorHelper.d" "icm20948\Invn\EmbUtils\InvProtocol.d" "icm20948\Invn\EmbUtils\InvQueue.d" "icm20948\Invn\EmbUtils\InvScheduler.d" "icm20948\Invn\EmbUtils\Message.d" "icm20948\Invn\EmbUtils\RingByteBuffer.d" "libs\myLib.d" 
+	-$(RM) "main.d" "icm20948\icm20948_dmp.d" "serialPort\uartHW.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

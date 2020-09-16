@@ -41,8 +41,8 @@
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_18.1.compilerID.LITTLE_ENDIAN.607253455" name="Little endian code [See 'General' page to edit] (--little_endian, -me)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_18.1.compilerID.LITTLE_ENDIAN" value="true" valueType="boolean"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_18.1.compilerID.INCLUDE_PATH.2024898826" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_18.1.compilerID.INCLUDE_PATH" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}&quot;"/>
-									<listOptionValue builtIn="false" value="${PROJECT_ROOT}/mpu9250"/>
-									<listOptionValue builtIn="false" value="${PROJECT_ROOT}/mpu9250/Invn"/>
+									<listOptionValue builtIn="false" value="${PROJECT_ROOT}/icm20948"/>
+									<listOptionValue builtIn="false" value="${PROJECT_ROOT}/icm20948/Invn"/>
 									<listOptionValue builtIn="false" value="F:/Programming/ti/TivaWare_C_Series-2.1.4.178"/>
 									<listOptionValue builtIn="false" value="F:/Programming/ti/TivaWare_C_Series-2.1.4.178/utils"/>
 									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>

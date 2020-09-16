@@ -1,17 +1,18 @@
 /**
- * MPU9250.h
+ * ICM20948.h
  *
  *  Created on: 15. 9. 2020.
  *      Author: Vedran Mikov
  *
  *  @version V1.0
  *  V1.0 -15.9.2020
+ *  + Basic support for ICM-20948 DMP software
  */
 #include "hwconfig.h"
 
 //  Compile following section only if hwconfig.h says to include this module
-#if !defined(ROVERKERNEL_MPU9250_MPU9250_H_) && defined(__HAL_USE_MPU9250__)
-#define ROVERKERNEL_MPU9250_MPU9250_H_
+#if !defined(ICM20948_H_) && defined(__HAL_USE_ICM20948__)
+#define ICM20948_H_
 
 #define USE_SPI_NOT_I2C             1       /* Default configuration - I2C */
 
@@ -44,19 +45,18 @@
 /**
  * Class object for MPU9250 sensor
  */
-class MPU9250
+class ICM20948
 {
     friend void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uint64_t timestamp, const void * data, const void *arg);
     public:
-        static MPU9250& GetI();
-        static MPU9250* GetP();
+        static ICM20948& GetI();
+        static ICM20948* GetP();
 
         int8_t  InitHW();
         int8_t  InitSW();
         int8_t  Reset();
         int8_t  Enabled(bool en);
         bool    IsDataReady();
-        uint8_t GetID();
 
         int8_t  ReadSensorData();
         int8_t  RPY(float* RPY, bool inDeg);
@@ -69,10 +69,10 @@ class MPU9250
 
 
     protected:
-        MPU9250();
-        ~MPU9250();
-        MPU9250(MPU9250 &arg) {}              //  No definition - forbid this
-        void operator=(MPU9250 const &arg) {} //  No definition - forbid this
+        ICM20948();
+        ~ICM20948();
+        ICM20948(ICM20948 &arg) {}              //  No definition - forbid this
+        void operator=(ICM20948 const &arg) {} //  No definition - forbid this
 
         //  Yaw-Pitch-Roll orientation[Y,P,R] in radians
         volatile float _ypr[3];
@@ -84,24 +84,9 @@ class MPU9250
         volatile float _mag[3];
         //  Magnetometer control
         bool _magEn;
-
-#if defined(__HAL_USE_MPU9250_NODMP__)
-    private:
-        //  Use Mahony algorithm for attitude estimations
-        Mahony _ahrs;
-    public:
-        int8_t SetupAHRS(float dT, float kp, float ki);
-#else
-    protected:
-        volatile float _gv[3];
         volatile float _quat[4];
-#endif
+        volatile float _gv[3];
 
-        //  Interface with task scheduler - provides memory space and function
-        //  to call in order for task scheduler to request service from this module
-#if defined(__USE_TASK_SCHEDULER__)
-        _kernelEntry _mpuKer;
-#endif
 };
 
-#endif /* MPU9250_H_ */
+#endif /* ICM20948_H_ */

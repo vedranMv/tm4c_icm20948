@@ -113,12 +113,12 @@ PDE_DEPS__QUOTED :=
 SUBDIRS := \
 . \
 HAL/tm4c1294 \
+icm20948/Invn/Devices/Drivers/Ak0991x \
+icm20948/Invn/Devices/Drivers/ICM20948 \
+icm20948/Invn/Devices \
+icm20948/Invn/DynamicProtocol \
+icm20948/Invn/EmbUtils \
+icm20948 \
 libs \
-mpu9250/Invn/Devices/Drivers/Ak0991x \
-mpu9250/Invn/Devices/Drivers/ICM20948 \
-mpu9250/Invn/Devices \
-mpu9250/Invn/DynamicProtocol \
-mpu9250/Invn/EmbUtils \
-mpu9250 \
 serialPort \
 

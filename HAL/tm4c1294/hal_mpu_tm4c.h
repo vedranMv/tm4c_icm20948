@@ -17,8 +17,8 @@
 #include "hwconfig.h"
 
 //  Compile following section only if hwconfig.h says to include this module
-#if !defined(ROVERKERNEL_HAL_TM4C1294_HAL_MPU_TM4C_H_) && defined(__HAL_USE_MPU9250__)
-#define ROVERKERNEL_HAL_TM4C1294_HAL_MPU_TM4C_H_
+#if !defined(_HAL_TM4C1294_HAL_MPU_TM4C_H_) && defined(__HAL_USE_ICM20948__)
+#define _HAL_TM4C1294_HAL_MPU_TM4C_H_
 
 #ifdef __cplusplus
 extern "C"
@@ -43,4 +43,4 @@ extern "C"
 }
 #endif
 
-#endif /* ROVERKERNEL_HAL_TM4C1294_HAL_MPU_TM4C_H_ */
+#endif /* _HAL_TM4C1294_HAL_MPU_TM4C_H_ */

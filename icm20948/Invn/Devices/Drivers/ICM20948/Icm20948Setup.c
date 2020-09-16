@@ -1,7 +1,7 @@
 /** ________________________________________________________________________________________________________
 * Copyright (c) 2015-2015 InvenSense Inc. All rights reserved.
 *
-* This software, related documentation and any modifications thereto (collectively “Software”) is subject
+* This software, related documentation and any modifications thereto (collectively Software) is subject
 * to InvenSense and its licensors' intellectual property rights under U.S. and international copyright
 * and other intellectual property rights laws.
 *
@@ -19,22 +19,20 @@
 * OF THE SOFTWARE.
 * ________________________________________________________________________________________________________
 */
-#include "../../../Devices/SensorTypes.h"
-
 #include "Icm20948Setup.h"
-#include "Icm20948.h"
-#include "Icm20948Defs.h"
-#include "Icm20948DataBaseDriver.h"
-#include "Icm20948DataBaseControl.h"
-#include "Icm20948MPUFifoControl.h"
-#include "Icm20948Augmented.h"
-#include "Icm20948LoadFirmware.h"
-#include "Icm20948Dmp3Driver.h"
-
-#include "../../../EmbUtils/DataConverter.h"
-#include "../../../EmbUtils/Message.h"
-
 #include <assert.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948Augmented.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948DataBaseControl.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948DataBaseDriver.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948Defs.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948Dmp3Driver.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948LoadFirmware.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948MPUFifoControl.h>
+#include <icm20948/Invn/Devices/Drivers/ICM20948/Icm20948Setup.h>
+#include <icm20948/Invn/Devices/SensorTypes.h>
+#include <icm20948/Invn/EmbUtils/dataconverter.h>
+#include <icm20948/Invn/EmbUtils/Message.h>
 
 /** @brief Set of flags for BAC state */
 #define BAC_DRIVE   0x01

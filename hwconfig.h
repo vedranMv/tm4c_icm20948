@@ -32,22 +32,18 @@
  * MPU can be configured to give raw data, or use DMP firmware
  */
 //  Select communication protocol - use either one of these two
-//#define __HAL_USE_MPU9250_I2C__
-#define __HAL_USE_MPU9250_SPI__
+//#define __HAL_USE_ICM20948_I2C__
+#define __HAL_USE_ICM20948_SPI__
 
-#if defined(__HAL_USE_MPU9250_SPI__) || defined(__HAL_USE_MPU9250_I2C__)
-    #define __HAL_USE_MPU9250__
+#if defined(__HAL_USE_ICM20948_SPI__) || defined(__HAL_USE_ICM20948_I2C__)
+    #define __HAL_USE_ICM20948__
 
 
     //  Select operating mode - use either one of these two
     //  Operating mode can be with raw sensor values or using DMP firmware
     //#define __HAL_USE_MPU9250_NODMP__
-    #define __HAL_USE_MPU9250_DMP__
+    #define __HAL_USE_ICM20948_DMP__
 #endif
 
-
-
-//  Define sensor for sensor library
-#define __MPU9250
 
 #endif

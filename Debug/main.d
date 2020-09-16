@@ -38,10 +38,10 @@ main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/suppor
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/float.h
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/float.h
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/__undef_macros
-main.obj: ../mpu9250/mpu9250.h
-main.obj: ../mpu9250/Invn/Devices/Drivers/Icm20948/Icm20948Setup.h
-main.obj: ../mpu9250/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvExport.h
-main.obj: ../mpu9250/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvBool.h
+main.obj: ../icm20948/icm20948.h
+main.obj: ../icm20948/Invn/Devices/Drivers/Icm20948/Icm20948Setup.h
+main.obj: ../icm20948/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvExport.h
+main.obj: ../icm20948/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvBool.h
 main.obj: ../serialPort/uartHW.h
 
 ../main.cpp: 
@@ -82,8 +82,8 @@ G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/support/ti/__lim
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/float.h: 
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/float.h: 
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/__undef_macros: 
-../mpu9250/mpu9250.h: 
-../mpu9250/Invn/Devices/Drivers/Icm20948/Icm20948Setup.h: 
-../mpu9250/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvExport.h: 
-../mpu9250/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvBool.h: 
+../icm20948/icm20948.h: 
+../icm20948/Invn/Devices/Drivers/Icm20948/Icm20948Setup.h: 
+../icm20948/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvExport.h: 
+../icm20948/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvBool.h: 
 ../serialPort/uartHW.h: 

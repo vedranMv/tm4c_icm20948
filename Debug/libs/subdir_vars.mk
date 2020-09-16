@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
+SHELL = cmd.exe
+
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../libs/myLib.c 
@@ -13,10 +15,10 @@ OBJS += \
 ./libs/myLib.obj 
 
 OBJS__QUOTED += \
-"libs/myLib.obj" 
+"libs\myLib.obj" 
 
 C_DEPS__QUOTED += \
-"libs/myLib.d" 
+"libs\myLib.d" 
 
 C_SRCS__QUOTED += \
 "../libs/myLib.c" 

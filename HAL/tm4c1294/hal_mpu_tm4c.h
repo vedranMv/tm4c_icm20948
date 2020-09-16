@@ -32,12 +32,12 @@ extern "C"
 
     extern void     HAL_MPU_WriteByte(uint8_t I2Caddress, uint8_t regAddress,
                                       uint8_t data);
-    extern uint8_t  HAL_MPU_WriteBytes(uint8_t I2Caddress, uint8_t regAddress,
-                                       uint16_t length, uint8_t *data);
+    extern int      HAL_MPU_WriteBytes(void * context, uint8_t regAddress,
+                                       const uint8_t *data, uint32_t length);
 
     extern uint8_t  HAL_MPU_ReadByte(uint8_t I2Caddress, uint8_t regAddress);
-    extern uint8_t  HAL_MPU_ReadBytes(uint8_t I2Caddress, uint8_t regAddress,
-                                      uint16_t length, uint8_t* data);
+    extern int      HAL_MPU_ReadBytes(void * context, uint8_t regAddress,
+                                      uint8_t* data, uint32_t length);
 
 #ifdef __cplusplus
 }

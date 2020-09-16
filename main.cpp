@@ -3,6 +3,25 @@
 #include "mpu9250/mpu9250.h"
 #include "serialPort/uartHW.h"
 
+static uint64_t timestamp;
+
+extern "C" {
+    /*
+    * Sleep implementation for ICM20948
+    */
+    void inv_icm20948_sleep(int ms) {
+        HAL_DelayUS(ms*1000);
+    }
+
+    void inv_icm20948_sleep_us(int us){
+        HAL_DelayUS(us);
+    }
+
+    uint64_t inv_icm20948_get_time_us(void){
+        return timestamp;
+    }
+
+}
 
 /**
  * main.cpp
@@ -49,8 +68,9 @@ int main(void)
 
         // INT pin can be held up for max 50us, so delay here to prevent reading the same data twice
         HAL_DelayUS(100);
+        timestamp += 100;
 
-        if (counter++ > 1000)
+        if (counter++ > 200)
         {
             // Every 1000 * 100us print out data to prevent spamming uart
 
@@ -64,7 +84,14 @@ int main(void)
             //  a float a splits it in 2 integers that are printed separately
 
 
-            DEBUG_WRITE("%03d.%2d, %03d.%2d, %03d.%2d},\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
+            DEBUG_WRITE("%03d.%02d,%03d.%02d,%03d.%02d\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
+            //mpu.Magnetometer(rpy);
+            //mpu.Gravity(rpy);
+            //DEBUG_WRITE("%03d.%02d,%03d.%02d,%03d.%02d\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
+
+            //DEBUG_WRITE("%03d.%02d,%03d.%02d,%03d.%02d\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
+            //DEBUG_WRITE("\n");
+
             counter = 0;
         }
     }

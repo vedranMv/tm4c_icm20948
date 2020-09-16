@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>tm4c_mpu9250</name>
+	<name>tm4c_icm20948</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -28,12 +28,18 @@
 		<link>
 			<name>uartstdio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/media/v125/shared/Programming/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.c</locationURI>
+			<location>F:/Programming/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.c</location>
 		</link>
 		<link>
 			<name>uartstdio.h</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/media/v125/shared/Programming/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.h</locationURI>
+			<location>F:/Programming/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.h</location>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>ORIGINAL_PROJECT_ROOT</name>
+			<value>file:/F:/Documents/workspaces/workspace_v7/tm4c_mpu9250</value>
+		</variable>
+	</variableList>
 </projectDescription>

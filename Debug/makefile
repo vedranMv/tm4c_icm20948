@@ -2,7 +2,9 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /home/v125/Programming/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS
+SHELL = cmd.exe
+
+CG_TOOL_ROOT := G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -15,36 +17,64 @@ ORDERED_OBJS += \
 "./HAL/tm4c1294/hal_mpu_i2c_tm4c.obj" \
 "./HAL/tm4c1294/hal_mpu_spi_tm4c.obj" \
 "./libs/myLib.obj" \
+"./mpu9250/Invn/Devices/Drivers/Ak0991x/Ak0991x.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948Augmented.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948AuxCompassAkm.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948AuxTransport.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948DataBaseControl.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948DataBaseDriver.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948DataConverter.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948Dmp3Driver.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948LoadFirmware.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948MPUFifoControl.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948SelfTest.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948Setup.obj" \
+"./mpu9250/Invn/Devices/Drivers/ICM20948/Icm20948Transport.obj" \
+"./mpu9250/Invn/Devices/Sensor.obj" \
+"./mpu9250/Invn/DynamicProtocol/DynProtocol.obj" \
+"./mpu9250/Invn/DynamicProtocol/DynProtocolTransportUart.obj" \
+"./mpu9250/Invn/EmbUtils/DataConverter.obj" \
+"./mpu9250/Invn/EmbUtils/ErrorHelper.obj" \
+"./mpu9250/Invn/EmbUtils/InvProtocol.obj" \
+"./mpu9250/Invn/EmbUtils/InvQueue.obj" \
+"./mpu9250/Invn/EmbUtils/InvScheduler.obj" \
+"./mpu9250/Invn/EmbUtils/Message.obj" \
+"./mpu9250/Invn/EmbUtils/RingByteBuffer.obj" \
 "./mpu9250/MahonyAHRS.obj" \
 "./mpu9250/api_mpu9250.obj" \
 "./mpu9250/dmp_mpu9250.obj" \
-"./mpu9250/nondmp_mpu9250.obj" \
-"./mpu9250/eMPL/inv_mpu.obj" \
-"./mpu9250/eMPL/inv_mpu_dmp_motion_driver.obj" \
 "./serialPort/uartHW.obj" \
 "../tm4c1294ncpdt.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
--l"/media/v125/shared/Programming/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" \
+-l"F:/Programming/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" \
 
 -include ../makefile.init
 
-RM := rm -rf
-RMDIR := rm -rf
+RM := DEL /F
+RMDIR := RMDIR /S/Q
 
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
 -include HAL/tm4c1294/subdir_vars.mk
 -include libs/subdir_vars.mk
+-include mpu9250/Invn/Devices/Drivers/Ak0991x/subdir_vars.mk
+-include mpu9250/Invn/Devices/Drivers/ICM20948/subdir_vars.mk
+-include mpu9250/Invn/Devices/subdir_vars.mk
+-include mpu9250/Invn/DynamicProtocol/subdir_vars.mk
+-include mpu9250/Invn/EmbUtils/subdir_vars.mk
 -include mpu9250/subdir_vars.mk
--include mpu9250/eMPL/subdir_vars.mk
 -include serialPort/subdir_vars.mk
 -include subdir_rules.mk
 -include HAL/tm4c1294/subdir_rules.mk
 -include libs/subdir_rules.mk
+-include mpu9250/Invn/Devices/Drivers/Ak0991x/subdir_rules.mk
+-include mpu9250/Invn/Devices/Drivers/ICM20948/subdir_rules.mk
+-include mpu9250/Invn/Devices/subdir_rules.mk
+-include mpu9250/Invn/DynamicProtocol/subdir_rules.mk
+-include mpu9250/Invn/EmbUtils/subdir_rules.mk
 -include mpu9250/subdir_rules.mk
--include mpu9250/eMPL/subdir_rules.mk
 -include serialPort/subdir_rules.mk
 -include objects.mk
 
@@ -142,42 +172,45 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-tm4c_mpu9250.out \
+tm4c_icm20948.out \
 
 EXE_OUTPUTS__QUOTED += \
-"tm4c_mpu9250.out" \
+"tm4c_icm20948.out" \
 
 BIN_OUTPUTS += \
-tm4c_mpu9250.hex \
+tm4c_icm20948.hex \
 
 BIN_OUTPUTS__QUOTED += \
-"tm4c_mpu9250.hex" \
+"tm4c_icm20948.hex" \
 
 
 # All Target
 all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "tm4c_mpu9250.out"
+	@$(MAKE) --no-print-directory -Onone "tm4c_icm20948.out"
 
 # Tool invocations
-tm4c_mpu9250.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
-	@echo 'Building target: $@'
+tm4c_icm20948.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"/home/v125/Programming/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C1294NCPDT -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"tm4c_mpu9250.map" --heap_size=0 --stack_size=512 -i"/home/v125/Programming/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/lib" -i"/home/v125/Programming/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="tm4c_mpu9250_linkInfo.xml" --rom_model -o "tm4c_mpu9250.out" $(ORDERED_OBJS)
-	@echo 'Finished building target: $@'
+	"G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C1294NCPDT -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"tm4c_icm20948.map" --heap_size=10000 --stack_size=10000 -i"G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/lib" -i"G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="tm4c_icm20948_linkInfo.xml" --rom_model -o "tm4c_icm20948.out" $(ORDERED_OBJS)
+	@echo 'Finished building target: "$@"'
 	@echo ' '
 
-tm4c_mpu9250.hex: $(EXE_OUTPUTS)
+tm4c_icm20948.hex: $(EXE_OUTPUTS)
+	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"/home/v125/Programming/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/bin/armhex"  -o "tm4c_mpu9250.hex" $(EXE_OUTPUTS__QUOTED)
-	@echo 'Finished building: $@'
+	"G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/bin/armhex"  -o "tm4c_icm20948.hex" $(EXE_OUTPUTS__QUOTED)
+	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "tm4c1294ncpdt_startup_ccs.obj" "uartstdio.obj" "HAL/tm4c1294/hal_common_tm4c.obj" "HAL/tm4c1294/hal_mpu_i2c_tm4c.obj" "HAL/tm4c1294/hal_mpu_spi_tm4c.obj" "libs/myLib.obj" "mpu9250/MahonyAHRS.obj" "mpu9250/api_mpu9250.obj" "mpu9250/dmp_mpu9250.obj" "mpu9250/nondmp_mpu9250.obj" "mpu9250/eMPL/inv_mpu.obj" "mpu9250/eMPL/inv_mpu_dmp_motion_driver.obj" "serialPort/uartHW.obj" 
-	-$(RM) "tm4c1294ncpdt_startup_ccs.d" "uartstdio.d" "HAL/tm4c1294/hal_common_tm4c.d" "HAL/tm4c1294/hal_mpu_i2c_tm4c.d" "HAL/tm4c1294/hal_mpu_spi_tm4c.d" "libs/myLib.d" "mpu9250/api_mpu9250.d" "mpu9250/eMPL/inv_mpu.d" "mpu9250/eMPL/inv_mpu_dmp_motion_driver.d" 
-	-$(RM) "main.d" "mpu9250/MahonyAHRS.d" "mpu9250/dmp_mpu9250.d" "mpu9250/nondmp_mpu9250.d" "serialPort/uartHW.d" 
+	-$(RM) "main.obj" "tm4c1294ncpdt_startup_ccs.obj" "uartstdio.obj" "HAL\tm4c1294\hal_common_tm4c.obj" "HAL\tm4c1294\hal_mpu_i2c_tm4c.obj" "HAL\tm4c1294\hal_mpu_spi_tm4c.obj" "libs\myLib.obj" "mpu9250\Invn\Devices\Drivers\Ak0991x\Ak0991x.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Augmented.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948AuxCompassAkm.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948AuxTransport.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseControl.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseDriver.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataConverter.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Dmp3Driver.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948LoadFirmware.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948MPUFifoControl.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948SelfTest.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Setup.obj" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Transport.obj" 
+	-$(RM) "mpu9250\Invn\Devices\Sensor.obj" "mpu9250\Invn\DynamicProtocol\DynProtocol.obj" "mpu9250\Invn\DynamicProtocol\DynProtocolTransportUart.obj" "mpu9250\Invn\EmbUtils\DataConverter.obj" "mpu9250\Invn\EmbUtils\ErrorHelper.obj" "mpu9250\Invn\EmbUtils\InvProtocol.obj" "mpu9250\Invn\EmbUtils\InvQueue.obj" "mpu9250\Invn\EmbUtils\InvScheduler.obj" "mpu9250\Invn\EmbUtils\Message.obj" "mpu9250\Invn\EmbUtils\RingByteBuffer.obj" "mpu9250\MahonyAHRS.obj" "mpu9250\api_mpu9250.obj" "mpu9250\dmp_mpu9250.obj" "serialPort\uartHW.obj" 
+	-$(RM) "tm4c1294ncpdt_startup_ccs.d" "uartstdio.d" "HAL\tm4c1294\hal_common_tm4c.d" "HAL\tm4c1294\hal_mpu_i2c_tm4c.d" "HAL\tm4c1294\hal_mpu_spi_tm4c.d" "libs\myLib.d" "mpu9250\Invn\Devices\Drivers\Ak0991x\Ak0991x.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Augmented.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948AuxCompassAkm.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948AuxTransport.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseControl.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataBaseDriver.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948DataConverter.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Dmp3Driver.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948LoadFirmware.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948MPUFifoControl.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948SelfTest.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Setup.d" "mpu9250\Invn\Devices\Drivers\ICM20948\Icm20948Transport.d" "mpu9250\Invn\Devices\Sensor.d" "mpu9250\Invn\DynamicProtocol\DynProtocol.d" 
+	-$(RM) "mpu9250\Invn\DynamicProtocol\DynProtocolTransportUart.d" "mpu9250\Invn\EmbUtils\DataConverter.d" "mpu9250\Invn\EmbUtils\ErrorHelper.d" "mpu9250\Invn\EmbUtils\InvProtocol.d" "mpu9250\Invn\EmbUtils\InvQueue.d" "mpu9250\Invn\EmbUtils\InvScheduler.d" "mpu9250\Invn\EmbUtils\Message.d" "mpu9250\Invn\EmbUtils\RingByteBuffer.d" "mpu9250\api_mpu9250.d" 
+	-$(RM) "main.d" "mpu9250\MahonyAHRS.d" "mpu9250\dmp_mpu9250.d" "serialPort\uartHW.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

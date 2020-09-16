@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
+SHELL = cmd.exe
+
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../main.cpp 
@@ -11,7 +13,7 @@ CMD_SRCS += \
 
 C_SRCS += \
 ../tm4c1294ncpdt_startup_ccs.c \
-/media/v125/shared/Programming/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.c 
+F:/Programming/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.c 
 
 C_DEPS += \
 ./tm4c1294ncpdt_startup_ccs.d \
@@ -42,6 +44,6 @@ CPP_SRCS__QUOTED += \
 
 C_SRCS__QUOTED += \
 "../tm4c1294ncpdt_startup_ccs.c" \
-"/media/v125/shared/Programming/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.c" 
+"F:/Programming/ti/TivaWare_C_Series-2.1.4.178/utils/uartstdio.c" 
 
 

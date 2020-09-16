@@ -142,8 +142,8 @@ void HAL_MPU_WriteByte(uint8_t I2Caddress, uint8_t regAddress, uint8_t data)
  * @param length Length of data to send
  * @return 0 to verify that function didn't hang somewhere
  */
-uint8_t HAL_MPU_WriteBytes(uint8_t I2Caddress, uint8_t regAddress,
-                           uint16_t length, uint8_t *data)
+int HAL_MPU_WriteBytes(void * context, uint8_t regAddress,
+                       const uint8_t *data, uint32_t length)
 {
     uint16_t i;
     uint32_t dummy[1];
@@ -198,8 +198,8 @@ uint8_t HAL_MPU_ReadByte(uint8_t I2Caddress, uint8_t regAddress)
  * @param count Number of bytes to red
  * @param dest Pointer to data buffer in which data is saved after reading
  */
-uint8_t HAL_MPU_ReadBytes(uint8_t I2Caddress, uint8_t regAddress,
-                          uint16_t length, uint8_t* data)
+int HAL_MPU_ReadBytes(void * context, uint8_t regAddress,
+                      uint8_t* data, uint32_t length)
 {
     uint16_t i;
     uint32_t dummy[1];

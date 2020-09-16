@@ -114,7 +114,11 @@ SUBDIRS := \
 . \
 HAL/tm4c1294 \
 libs \
+mpu9250/Invn/Devices/Drivers/Ak0991x \
+mpu9250/Invn/Devices/Drivers/ICM20948 \
+mpu9250/Invn/Devices \
+mpu9250/Invn/DynamicProtocol \
+mpu9250/Invn/EmbUtils \
 mpu9250 \
-mpu9250/eMPL \
 serialPort \
 

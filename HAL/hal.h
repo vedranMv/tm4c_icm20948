@@ -18,7 +18,7 @@
 #ifdef __BOARD_TM4C1294NCPDT__
 
     #include "tm4c1294/hal_common_tm4c.h"
-    #include "tm4c1294/hal_mpu_tm4c.h"
+    #include "tm4c1294/hal_icm_tm4c.h"
 
 
 #elif __BOARD_ATMEGA328P__

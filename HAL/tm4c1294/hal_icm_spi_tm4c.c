@@ -9,7 +9,7 @@
  *  Created on: Mar 4, 2017
  *      Author: Vedran
  */
-#include "hal_mpu_tm4c.h"
+#include "hal_icm_tm4c.h"
 
 #if defined(__HAL_USE_ICM20948_SPI__)       //  Compile only if module is enabled
 

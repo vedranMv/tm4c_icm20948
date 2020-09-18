@@ -37,7 +37,7 @@ extern "C" {
 #include "../../../EmbUtils/InvBool.h"
 #include "../../../EmbUtils/InvError.h"
 
-#include "HAL/tm4c1294/hal_mpu_tm4c.h"
+#include "HAL/tm4c1294/hal_icm_tm4c.h"
 
 #include <stdint.h>
 #include <assert.h>

@@ -19,7 +19,7 @@ main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/sys/_stdint.h
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/stdbool.h
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdbool.h
 main.obj: ../HAL/tm4c1294/hal_common_tm4c.h
-main.obj: ../HAL/tm4c1294/hal_mpu_tm4c.h
+main.obj: ../HAL/tm4c1294/hal_icm_tm4c.h
 main.obj: ../libs/myLib.h
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/string.h
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/string.h
@@ -67,7 +67,7 @@ G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/sys/_stdint.h:
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/stdbool.h: 
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdbool.h: 
 ../HAL/tm4c1294/hal_common_tm4c.h: 
-../HAL/tm4c1294/hal_mpu_tm4c.h: 
+../HAL/tm4c1294/hal_icm_tm4c.h: 
 ../libs/myLib.h: 
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/string.h: 
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/string.h: 

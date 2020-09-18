@@ -133,6 +133,9 @@ void inv_icm20948_init_matrix(struct inv_icm20948 * s)
 	s->soft_iron_matrix[0] = (1L<<30);
 	s->soft_iron_matrix[4] = (1L<<30);
 	s->soft_iron_matrix[8] = (1L<<30);
+//    s->soft_iron_matrix[0] = (1L<<31);
+//    s->soft_iron_matrix[4] = (1L<<31);
+//    s->soft_iron_matrix[8] = (1L<<31);
 
 	inv_icm20948_set_chip_to_body_axis_quaternion(s, s->mounting_matrix, 0.0);
 }
@@ -481,7 +484,7 @@ static int inv_icm20948_is_streamed_sensor(uint8_t id)
 
 /** @brief Preprocess all timestamps so that they either contain very last time at which MEMS IRQ was fired
 * or last time sent for the sensor + ODR */
-static uint8_t inv_icm20948_updateTs(struct inv_icm20948 * s, int * data_left_in_fifo,
+static int8_t inv_icm20948_updateTs(struct inv_icm20948 * s, int * data_left_in_fifo,
 	unsigned short * total_sample_cnt, uint64_t * lastIrqTimeUs)
 {
 	/** @brief Very last time in us at which IRQ was fired since flushing FIFO process was started */

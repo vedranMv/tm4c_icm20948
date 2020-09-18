@@ -2,6 +2,7 @@
 #include "libs/myLib.h"
 #include "icm20948/icm20948.h"
 #include "serialPort/uartHW.h"
+#include <cstdio>
 
 static uint64_t timestamp;
 
@@ -57,36 +58,38 @@ int main(void)
             //  Read sensor data
             mpu.ReadSensorData();
             //  Get RPY values
-            mpu.RPY(rpy, true);
+            //mpu.RPY(rpy, true);
+
+            if (counter++ > 0)
+            {
+                // Every 1000 * 100us print out data to prevent spamming uart
+
+                //  Print out sensor measurements
+    //            DEBUG_WRITE("{%02d.%03d, %02d.%03d, %02d.%03d, ", _FTOI_(__mpu._gyro[0]), _FTOI_(__mpu._gyro[1]), _FTOI_(__mpu._gyro[2]));
+    //            DEBUG_WRITE("%02d.%03d, %02d.%03d, %02d.%03d, ", _FTOI_(__mpu._acc[0]), _FTOI_(__mpu._acc[1]), _FTOI_(__mpu._acc[2]));
+    //            DEBUG_WRITE("%02d.%03d, %02d.%03d, %02d.%03d},\n", _FTOI_(__mpu._mag[0]), _FTOI_(__mpu._mag[1]), _FTOI_(__mpu._mag[2]));
+
+                //  Print out orientation
+                //  note: _FTOI_ is just a macro to print float numbers, it takes
+                //  a float a splits it in 2 integers that are printed separately
+
+
+                //DEBUG_WRITE("%03d.%02d,%03d.%02d,%03d.%02d\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
+                char buffer[80];
+                mpu.Magnetometer(rpy);
+                //mpu.Gravity(rpy);
+                snprintf(buffer, 80, "%d,%d,%d\r\n",(int)rpy[0],(int)rpy[1],(int)rpy[2]);
+                DEBUG_WRITE("%s", buffer);
+
+                //DEBUG_WRITE("%03d.%02d,%03d.%02d,%03d.%02d\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
+                //DEBUG_WRITE("\n");
+
+                counter = 0;
+            }
         }
 
         // INT pin can be held up for max 50us, so delay here to prevent reading the same data twice
         HAL_DelayUS(100);
         timestamp += 100;
-
-        if (counter++ > 200)
-        {
-            // Every 1000 * 100us print out data to prevent spamming uart
-
-            //  Print out sensor measurements
-//            DEBUG_WRITE("{%02d.%03d, %02d.%03d, %02d.%03d, ", _FTOI_(__mpu._gyro[0]), _FTOI_(__mpu._gyro[1]), _FTOI_(__mpu._gyro[2]));
-//            DEBUG_WRITE("%02d.%03d, %02d.%03d, %02d.%03d, ", _FTOI_(__mpu._acc[0]), _FTOI_(__mpu._acc[1]), _FTOI_(__mpu._acc[2]));
-//            DEBUG_WRITE("%02d.%03d, %02d.%03d, %02d.%03d},\n", _FTOI_(__mpu._mag[0]), _FTOI_(__mpu._mag[1]), _FTOI_(__mpu._mag[2]));
-
-            //  Print out orientation
-            //  note: _FTOI_ is just a macro to print float numbers, it takes
-            //  a float a splits it in 2 integers that are printed separately
-
-
-            DEBUG_WRITE("%03d.%02d,%03d.%02d,%03d.%02d\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
-            //mpu.Magnetometer(rpy);
-            //mpu.Gravity(rpy);
-            //DEBUG_WRITE("%03d.%02d,%03d.%02d,%03d.%02d\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
-
-            //DEBUG_WRITE("%03d.%02d,%03d.%02d,%03d.%02d\n", _FTOI_(rpy[0]), _FTOI_(rpy[1]), _FTOI_(rpy[2]));
-            //DEBUG_WRITE("\n");
-
-            counter = 0;
-        }
     }
 }

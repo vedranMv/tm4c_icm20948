@@ -12,7 +12,7 @@
 #include "libs/myLib.h"
 
 /*		Communication settings	 	*/
-#define COMM_BAUD	115200
+#define COMM_BAUD	9600
 #define TX_BUF_LEN	512
 
 /*      Macro to short the expression needed to print to debug port     */

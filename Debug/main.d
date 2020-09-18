@@ -43,6 +43,10 @@ main.obj: ../icm20948/Invn/Devices/Drivers/Icm20948/Icm20948Setup.h
 main.obj: ../icm20948/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvExport.h
 main.obj: ../icm20948/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvBool.h
 main.obj: ../serialPort/uartHW.h
+main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/cstdio
+main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/stdio.h
+main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdio.h
+main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdarg.h
 
 ../main.cpp: 
 ../HAL/hal.h: 
@@ -87,3 +91,7 @@ G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/__undef_macros:
 ../icm20948/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvExport.h: 
 ../icm20948/Invn/Devices/Drivers/Icm20948/../../../EmbUtils/InvBool.h: 
 ../serialPort/uartHW.h: 
+G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/cstdio: 
+G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/stdio.h: 
+G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdio.h: 
+G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdarg.h: 

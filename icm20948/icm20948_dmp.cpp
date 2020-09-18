@@ -43,7 +43,6 @@ static const uint8_t dmp3_image[] = {
 inv_icm20948_t icm_device;
 
 static const uint8_t EXPECTED_WHOAMI[] = { 0xEA }; /* WHOAMI value for ICM20948 or derivative */
-static int unscaled_bias[THREE_AXES * 2];
 
 /* FSR configurations */
 int32_t cfg_acc_fsr = 4; // Default = +/- 4g. Valid ranges: 2, 4, 8, 16
@@ -93,10 +92,6 @@ static uint8_t icm20948_get_grv_accuracy(void)
     return (min(accel_accuracy, gyro_accuracy));
 }
 
-/*
-* Mask to keep track of enabled sensors
-*/
-static uint32_t enabled_sensor_mask = 0;
 
 inv_bool_t interface_is_SPI(void)
 {
@@ -175,8 +170,9 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
             event.data.acc.accuracy_flag = inv_icm20948_get_accel_accuracy();
             memcpy((void*)ICM20948::GetI()._gv, event.data.acc.vect, sizeof(event.data.acc.vect));
             break;
-        case INV_SENSOR_TYPE_LINEAR_ACCELERATION:
         case INV_SENSOR_TYPE_ACCELEROMETER:
+            break;
+        case INV_SENSOR_TYPE_LINEAR_ACCELERATION:
             memcpy(event.data.acc.vect, data, sizeof(event.data.acc.vect));
             memcpy(&(event.data.acc.accuracy_flag), arg, sizeof(event.data.acc.accuracy_flag));
             memcpy((void*)ICM20948::GetI()._acc, event.data.acc.vect, sizeof(event.data.acc.vect));
@@ -187,15 +183,17 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
             memcpy((void*)ICM20948::GetI()._mag, event.data.mag.vect, sizeof(event.data.mag.vect));
             break;
         case INV_SENSOR_TYPE_GEOMAG_ROTATION_VECTOR:
+            break;
         case INV_SENSOR_TYPE_ROTATION_VECTOR:
             memcpy(&(event.data.quaternion.accuracy), arg, sizeof(event.data.quaternion.accuracy));
             memcpy(event.data.quaternion.quat, data, sizeof(event.data.quaternion.quat));
             //memcpy((void*)ICM20948::GetI()._quat, event.data.quaternion.quat, sizeof(event.data.quaternion.quat));
+            memcpy((void*)ICM20948::GetI()._quat, event.data.quaternion.quat, sizeof(event.data.quaternion.quat));
             break;
         case INV_SENSOR_TYPE_GAME_ROTATION_VECTOR:
             memcpy(event.data.quaternion.quat, data, sizeof(event.data.quaternion.quat));
             event.data.quaternion.accuracy_flag = icm20948_get_grv_accuracy();
-            memcpy((void*)ICM20948::GetI()._quat, event.data.quaternion.quat, sizeof(event.data.quaternion.quat));
+            //memcpy((void*)ICM20948::GetI()._quat, event.data.quaternion.quat, sizeof(event.data.quaternion.quat));
             break;
         case INV_SENSOR_TYPE_BAC:
             memcpy(&(event.data.bac.event), data, sizeof(event.data.bac.event));
@@ -227,33 +225,6 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
 
 }
 
-static enum inv_icm20948_sensor idd_sensortype_conversion(int sensor)
-{
-    switch(sensor)
-    {
-        case INV_SENSOR_TYPE_RAW_ACCELEROMETER:       return INV_ICM20948_SENSOR_RAW_ACCELEROMETER;
-        case INV_SENSOR_TYPE_RAW_GYROSCOPE:           return INV_ICM20948_SENSOR_RAW_GYROSCOPE;
-        case INV_SENSOR_TYPE_ACCELEROMETER:           return INV_ICM20948_SENSOR_ACCELEROMETER;
-        case INV_SENSOR_TYPE_GYROSCOPE:               return INV_ICM20948_SENSOR_GYROSCOPE;
-        case INV_SENSOR_TYPE_UNCAL_MAGNETOMETER:      return INV_ICM20948_SENSOR_MAGNETIC_FIELD_UNCALIBRATED;
-        case INV_SENSOR_TYPE_UNCAL_GYROSCOPE:         return INV_ICM20948_SENSOR_GYROSCOPE_UNCALIBRATED;
-        case INV_SENSOR_TYPE_BAC:                     return INV_ICM20948_SENSOR_ACTIVITY_CLASSIFICATON;
-        case INV_SENSOR_TYPE_STEP_DETECTOR:           return INV_ICM20948_SENSOR_STEP_DETECTOR;
-        case INV_SENSOR_TYPE_STEP_COUNTER:            return INV_ICM20948_SENSOR_STEP_COUNTER;
-        case INV_SENSOR_TYPE_GAME_ROTATION_VECTOR:    return INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR;
-        case INV_SENSOR_TYPE_ROTATION_VECTOR:         return INV_ICM20948_SENSOR_ROTATION_VECTOR;
-        case INV_SENSOR_TYPE_GEOMAG_ROTATION_VECTOR:  return INV_ICM20948_SENSOR_GEOMAGNETIC_ROTATION_VECTOR;
-        case INV_SENSOR_TYPE_MAGNETOMETER:            return INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD;
-        case INV_SENSOR_TYPE_SMD:                     return INV_ICM20948_SENSOR_WAKEUP_SIGNIFICANT_MOTION;
-        case INV_SENSOR_TYPE_PICK_UP_GESTURE:         return INV_ICM20948_SENSOR_FLIP_PICKUP;
-        case INV_SENSOR_TYPE_TILT_DETECTOR:           return INV_ICM20948_SENSOR_WAKEUP_TILT_DETECTOR;
-        case INV_SENSOR_TYPE_GRAVITY:                 return INV_ICM20948_SENSOR_GRAVITY;
-        case INV_SENSOR_TYPE_LINEAR_ACCELERATION:     return INV_ICM20948_SENSOR_LINEAR_ACCELERATION;
-        case INV_SENSOR_TYPE_ORIENTATION:             return INV_ICM20948_SENSOR_ORIENTATION;
-        case INV_SENSOR_TYPE_B2S:                     return INV_ICM20948_SENSOR_B2S;
-        default:                                      return INV_ICM20948_SENSOR_MAX;
-    }
-}
 
 ///-----------------------------------------------------------------------------
 ///         DMP related functions --  End
@@ -410,7 +381,16 @@ int8_t ICM20948::InitSW()
         DEBUG_WRITE("Compass not detected...\n");
     }
 #endif
+    //  Apply compass bias
+    int biasq16[3] = {0};
+    biasq16[0] = (int)(-73.363101*(float)(1L<<16));
+    biasq16[1] = (int)(-69.95*(float)(1L<<16));
+    biasq16[2] = (int)(-3.0*(float)(1L<<16));
+    inv_icm20948_set_bias(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD, biasq16);
 
+    /*
+     * Set full-scale range for sensors
+     */
     for (int ii = 0; ii < INV_ICM20948_SENSOR_MAX; ii++)
     {
         inv_icm20948_set_matrix(&icm_device, cfg_mounting_matrix, (inv_icm20948_sensor)ii);
@@ -454,25 +434,25 @@ int8_t ICM20948::InitSW()
 
     //enable sensors
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_ACCELEROMETER, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ACCELEROMETER, 20);
+    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ACCELEROMETER, 5);
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, 20);
-
+    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, 5);
+    rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD, 1);
+    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD, 5);
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_ROTATION_VECTOR, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_ROTATION_VECTOR, 20);
+    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_ROTATION_VECTOR, 5);
+
+    rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR, 1);
+    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR, 5);
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_LINEAR_ACCELERATION, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_LINEAR_ACCELERATION, 20);
+    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_LINEAR_ACCELERATION, 5);
 
 
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_ROTATION_VECTOR, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ROTATION_VECTOR, 20);
-    rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_ORIENTATION, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ORIENTATION, 20);
+    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ROTATION_VECTOR, 5);
 
-    rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR, 20);
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GRAVITY, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GRAVITY, 20);
+    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GRAVITY, 5);
 
 
 
@@ -544,16 +524,39 @@ int8_t ICM20948::RPY(float* RPY, bool inDeg)
     qt.z = _quat[3];
     qt.w = _quat[0];
 
-    VectorFloat v;
-    dmp_GetGravity(&v, &qt);
+//    VectorFloat v;
+//    dmp_GetGravity(&v, &qt);
+//
+//    dmp_GetYawPitchRoll((float*)(ICM20948::GetI()._ypr), &qt, &v);
+//
+//    for (uint8_t i = 0; i < 3; i++)
+//        if (inDeg)
+//            RPY[2-i] = _ypr[i]*180.0/PI_CONST;
+//        else
+//            RPY[2-i] = _ypr[i];
 
-    dmp_GetYawPitchRoll((float*)(ICM20948::GetI()._ypr), &qt, &v);
+    // roll (x-axis rotation)
+    float sinr_cosp = 2 * (qt.w * qt.x + qt.y * qt.z);
+    float cosr_cosp = 1 - 2 * (qt.x * qt.x + qt.y * qt.y);
+    _ypr[2] = atan2f(sinr_cosp, cosr_cosp);
 
-    for (uint8_t i = 0; i < 3; i++)
-        if (inDeg)
-            RPY[2-i] = _ypr[i]*180.0/PI_CONST;
-        else
-            RPY[2-i] = _ypr[i];
+    // pitch (y-axis rotation)
+    float sinp = 2 * (qt.w * qt.y - qt.z * qt.x);
+    if (fabsf(sinp) >= 1)
+        _ypr[1] = copysignf(M_PI / 2, sinp); // use 90 degrees if out of range
+    else
+        _ypr[1] = asinf(sinp);
+
+    // yaw (z-axis rotation)
+    float siny_cosp = 2 * (qt.w * qt.z + qt.x * qt.y);
+    float cosy_cosp = 1 - 2 * (qt.y * qt.y + qt.z * qt.z);
+    _ypr[0] = atan2f(siny_cosp, cosy_cosp);
+
+        for (uint8_t i = 0; i < 3; i++)
+            if (inDeg)
+                RPY[2-i] = _ypr[i]*180.0/M_PI;
+            else
+                RPY[2-i] = _ypr[i];
 
     return MPU_SUCCESS;
 }

@@ -2,7 +2,7 @@
 * ________________________________________________________________________________________________________
 * Copyright (c) 2015-2015 InvenSense Inc. All rights reserved.
 *
-* This software, related documentation and any modifications thereto (collectively “Software”) is subject
+* This software, related documentation and any modifications thereto (collectively Software) is subject
 * to InvenSense and its licensors' intellectual property rights under U.S. and international copyright
 * and other intellectual property rights laws.
 *
@@ -77,7 +77,6 @@ static uint8_t check_reg_access_lp_disable(struct inv_icm20948 * s, unsigned sho
 	case REG_INT_STATUS:     /** (BANK_0 | 0x19) */
 	case REG_DMP_INT_STATUS: /** (BANK_0 | 0x18) */
 		return 0;
-		break;
 	default:
 		break;
 	}

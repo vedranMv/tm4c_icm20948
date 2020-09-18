@@ -25,9 +25,9 @@ extern "C"
 /* forward declaration */
 struct inv_icm20948;
 
-#ifndef M_PI
-  #define M_PI 3.14159265358979323846f
-#endif 
+//#ifndef M_PI
+//  #define M_PI 3.14159265358979323846f
+//#endif
 #define INV_TWO_POWER_NEG_30 9.313225746154785e-010f
 
 #define ABS(x) (((x)>=0)?(x):-(x)) /*!< Computes the absolute value of its argument \a x. \ingroup invn_macro */

@@ -11,6 +11,8 @@
 #include "HAL/hal.h"
 #include "libs/myLib.h"
 #include "libs/helper_3dmath.h"
+#include "libs/linkedlist.hpp"
+#include <cstdio>
 
 #include "Invn/Devices/Drivers/Icm20948/Icm20948.h"
 #include "Invn/Devices/Drivers/Icm20948/Icm20948MPUFifoControl.h"
@@ -26,7 +28,6 @@
 #ifdef __DEBUG_SESSION__
 #include "serialPort/uartHW.h"
 #endif
-
 
 ///-----------------------------------------------------------------------------
 ///         DMP related functions --  Start
@@ -45,8 +46,13 @@ inv_icm20948_t icm_device;
 static const uint8_t EXPECTED_WHOAMI[] = { 0xEA }; /* WHOAMI value for ICM20948 or derivative */
 
 /* FSR configurations */
-int32_t cfg_acc_fsr = 4; // Default = +/- 4g. Valid ranges: 2, 4, 8, 16
-int32_t cfg_gyr_fsr = 500; // Default = +/- 2000dps. Valid ranges: 250, 500, 1000, 2000
+int32_t cfg_acc_fsr = 2; // Default = +/- 4g. Valid ranges: 2, 4, 8, 16
+int32_t cfg_gyr_fsr = 250; // Default = +/- 2000dps. Valid ranges: 250, 500, 1000, 2000
+
+/* Motion thresholds: acc >= 0.2m/s || gyro >= 1dps || detla_mag >= 5 */
+const float motion_threshold_acc = 0.15;
+const float motion_threshold_gyro = 1;
+const float motion_threshold_mag = 3;
 
 /*
 * Mounting matrix configuration applied for Accel, Gyro and Mag
@@ -163,7 +169,8 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
         case INV_SENSOR_TYPE_GYROSCOPE:
             memcpy(event.data.gyr.vect, data, sizeof(event.data.gyr.vect));
             memcpy(&(event.data.gyr.accuracy_flag), arg, sizeof(event.data.gyr.accuracy_flag));
-            memcpy((void*)ICM20948::GetI()._gyro, event.data.gyr.vect, sizeof(event.data.gyr.vect));
+            //memcpy((void*)ICM20948::GetI()._gyro, event.data.gyr.vect, sizeof(event.data.gyr.vect));
+            ICM20948::GetI().SetGyroscope(event.data.gyr.vect);
             break;
         case INV_SENSOR_TYPE_GRAVITY:
             memcpy(event.data.acc.vect, data, sizeof(event.data.acc.vect));
@@ -171,11 +178,15 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
             memcpy((void*)ICM20948::GetI()._gv, event.data.acc.vect, sizeof(event.data.acc.vect));
             break;
         case INV_SENSOR_TYPE_ACCELEROMETER:
+            memcpy(event.data.acc.vect, data, sizeof(event.data.acc.vect));
+            memcpy(&(event.data.acc.accuracy_flag), arg, sizeof(event.data.acc.accuracy_flag));
+            //memcpy((void*)ICM20948::GetI()._accRaw, event.data.acc.vect, sizeof(event.data.acc.vect));
             break;
         case INV_SENSOR_TYPE_LINEAR_ACCELERATION:
             memcpy(event.data.acc.vect, data, sizeof(event.data.acc.vect));
             memcpy(&(event.data.acc.accuracy_flag), arg, sizeof(event.data.acc.accuracy_flag));
-            memcpy((void*)ICM20948::GetI()._acc, event.data.acc.vect, sizeof(event.data.acc.vect));
+            memcpy((void*)ICM20948::GetI()._accRaw, event.data.acc.vect, sizeof(event.data.acc.vect));
+            ICM20948::GetI().SetAcceleration(event.data.acc.vect);
             break;
         case INV_SENSOR_TYPE_MAGNETOMETER:
             memcpy(event.data.mag.vect, data, sizeof(event.data.mag.vect));
@@ -216,6 +227,7 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
             memcpy(&(event.data.orientation), data, 3*sizeof(float));
             break;
         case INV_SENSOR_TYPE_RAW_ACCELEROMETER:
+
         case INV_SENSOR_TYPE_RAW_GYROSCOPE:
             memcpy(event.data.raw3d.vect, data, sizeof(event.data.raw3d.vect));
             break;
@@ -396,11 +408,20 @@ int8_t ICM20948::InitSW()
         inv_icm20948_set_matrix(&icm_device, cfg_mounting_matrix, (inv_icm20948_sensor)ii);
     }
 
+    //  Smooth accel output
+    icm_device.base_state.accel_averaging = 5;
     inv_icm20948_set_fsr(&icm_device, INV_ICM20948_SENSOR_RAW_ACCELEROMETER, (const void *)&cfg_acc_fsr);
     inv_icm20948_set_fsr(&icm_device, INV_ICM20948_SENSOR_ACCELEROMETER, (const void *)&cfg_acc_fsr);
     inv_icm20948_set_fsr(&icm_device, INV_ICM20948_SENSOR_RAW_GYROSCOPE, (const void *)&cfg_gyr_fsr);
     inv_icm20948_set_fsr(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, (const void *)&cfg_gyr_fsr);
     inv_icm20948_set_fsr(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE_UNCALIBRATED, (const void *)&cfg_gyr_fsr);
+
+    //inv_icm20948_set_bias(&icm_device, INV_ICM20948_SENSOR_ACCELEROMETER, biasq16);
+    //  Load bias data for gyro
+//    biasq16[0] = (int)(0.027*(float)(1L<<16));
+//    biasq16[1] = (int)(0.026*(float)(1L<<16));
+//    biasq16[2] = (int)(0.020*(float)(1L<<16));
+//    inv_icm20948_set_bias(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, biasq16);
 
     /* re-initialize base state structure */
     inv_icm20948_init_structure(&icm_device);
@@ -427,33 +448,87 @@ int8_t ICM20948::InitSW()
     else
     {
         DEBUG_WRITE(" >Firmware loaded\n");
-        DEBUG_WRITE(" >Updating DMP features...");
+        DEBUG_WRITE(" >Enabling sensors:");
     }
 #endif
 
 
     //enable sensors
+#ifdef __DEBUG_SESSION__
+    DEBUG_WRITE("    Accelerometer: ");
+#endif
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_ACCELEROMETER, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ACCELEROMETER, 5);
+    rc |= inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ACCELEROMETER, 5);
+
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    Gyroscope: ");
+#endif
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, 5);
+    rc |= inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    Magnetometer: ");
+#endif
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD, 5);
+    rc |= inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    Geomag rotation: ");
+#endif
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_ROTATION_VECTOR, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_ROTATION_VECTOR, 5);
-
+    rc |= inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_ROTATION_VECTOR, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    6DOF fusion: ");
+#endif
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR, 5);
+    rc |= inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    Linear acceleration: ");
+#endif
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_LINEAR_ACCELERATION, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_LINEAR_ACCELERATION, 5);
-
-
+    rc |= inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_LINEAR_ACCELERATION, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    9DOF fusion: ");
+#endif
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_ROTATION_VECTOR, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ROTATION_VECTOR, 5);
-
+    rc |= inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_ROTATION_VECTOR, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    Gravity vector: ");
+#endif
     rc = inv_icm20948_enable_sensor(&icm_device, INV_ICM20948_SENSOR_GRAVITY, 1);
-    inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GRAVITY, 5);
-
+    rc |= inv_icm20948_set_sensor_period(&icm_device, INV_ICM20948_SENSOR_GRAVITY, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+#endif
 
 
     return MPU_SUCCESS;
@@ -506,6 +581,21 @@ int8_t ICM20948::ReadSensorData()
     int8_t retVal = MPU_ERROR;
 
     inv_icm20948_poll_sensor(&icm_device, (void *)0, build_sensor_event_data);
+
+    //  Gravity is returned in G's
+    _acc[0] *= GRAVITY_CONST;
+    _acc[1] *= GRAVITY_CONST;
+    _acc[2] *= GRAVITY_CONST;
+
+    _accRaw[0] *= GRAVITY_CONST;
+    _accRaw[1] *= GRAVITY_CONST;
+    _accRaw[2] *= GRAVITY_CONST;
+
+    _accRaw2[0] *= GRAVITY_CONST;
+    _accRaw2[1] *= GRAVITY_CONST;
+    _accRaw2[2] *= GRAVITY_CONST;
+
+    UpdateActivity();
 
      return retVal;
 }
@@ -570,11 +660,212 @@ int8_t ICM20948::RPY(float* RPY, bool inDeg)
 int8_t ICM20948::Acceleration(float *acc)
 {
     memcpy((void*)acc, (void*)_acc, sizeof(float)*3);
-    acc[0] *= GRAVITY_CONST;
-    acc[1] *= GRAVITY_CONST;
-    acc[2] *= GRAVITY_CONST;
 
     return MPU_SUCCESS;
+}
+
+/**
+ * Copy acceleration from internal buffer to user-provided one
+ * @param acc Pointer a float array of min. size 3 to store 3-axis acceleration
+ *        data
+ * @return One of MPU_* error codes
+ */
+int8_t ICM20948::RawAcceleration(float *acc)
+{
+    memcpy((void*)acc, (void*)_accRaw, sizeof(float)*3);
+
+    return MPU_SUCCESS;
+}
+
+int8_t ICM20948::RawAcceleration2(float *acc)
+{
+    memcpy((void*)acc, (void*)_accRaw2, sizeof(float)*3);
+
+    return MPU_SUCCESS;
+}
+
+/**
+ * Update accelerometer data
+ * Updates raw accelerometer data by passing it through a median filter (window=3)
+ * @param acc New accelerometer data sample
+ */
+//void ICM20948::SetAcceleration(float *acc)
+//{
+//    //  Median filter with windows 3 on acceleration
+//    static int8_t counter = 0;
+//    static float buffer[3][3];
+//    static const float alpha = 0.03;
+//
+//
+//    memcpy((void*)&buffer[counter], (void*)acc, sizeof(float)*3);
+//    //  For each axis, go through all 3 members and find median then save
+//    //  median into a variable that will be returned as final acceleration
+//    for (int8_t axis = 0; axis < 3; axis++)
+//        for (int8_t i = counter; i < 6; i++)
+//            if ( ((buffer[i%3][axis] <= buffer[(i-1+3)%3][axis]) &&
+//                  (buffer[i%3][axis] >= buffer[(i+1)%3][axis])) ||
+//                 ((buffer[i%3][axis] >= buffer[(i-1+3)%3][axis]) &&
+//                  (buffer[i%3][axis] <= buffer[(i+1)%3][axis])) )
+//            {
+//                //  When saving acceleration, apply low-pass filter
+//                 _acc[axis] = buffer[i%3][axis];
+//                //_acc[axis] = _acc[axis] - alpha * (_acc[axis] - buffer[i%3][axis]);
+//                break;
+//            }
+//
+//    counter = (counter + 1) % 3;
+//}
+
+void ICM20948::SetAcceleration(float *acc)
+{
+    //  Median filter with windows 3 on acceleration
+    static const uint8_t windowSize = 51;
+    static LinkedList buffer;
+    static uint8_t counter = 0;
+
+    ///  Insert the element on the list, in a sorted manner
+    if (buffer.Size() == windowSize)
+        buffer.DeleteWhereIndex(counter);
+    buffer.addS(acc[0], counter);
+
+    //  Take a middle element from the sorted list
+    if (buffer.Size() == windowSize)
+        _acc[0] = buffer.at((windowSize-1)/2);
+
+    counter = (counter + 1) % windowSize;
+}
+
+/**
+ * Evaluates raw sensor data to figure out whether the IMU is stationary
+ * @return
+ */
+//void ICM20948::UpdateActivity()
+//{
+//    const uint8_t windowSize = 50;
+//    static float buffer[windowSize][3] = {0};
+//    static float sensAvg[2][3] = {0};
+//    static int8_t bufCounter = 0, avgCounter = 0;
+//
+//    sensAvg[avgCounter][0] -= buffer[bufCounter][0]/50;
+//    buffer[bufCounter][0] = _acc[0] + _acc[1] + _acc[2];
+//    sensAvg[avgCounter][0] += buffer[bufCounter][0]/50;
+//
+//    sensAvg[avgCounter][1] -= buffer[bufCounter][1]/50;
+//    buffer[bufCounter][1] = _gyro[0] + _gyro[1] + _gyro[2];
+//    sensAvg[avgCounter][1] += buffer[bufCounter][1]/50;
+//
+//    sensAvg[avgCounter][2] -= buffer[bufCounter][2]/50;
+//    buffer[bufCounter][2] = _mag[0] + _mag[1] + _mag[2];
+//    sensAvg[avgCounter][2] += buffer[bufCounter][2]/50;
+//
+//    if ((bufCounter + 1) % windowSize == 0)
+//    {
+//        uint8_t threshCount = 0;
+//        if (fabsf(sensAvg[avgCounter][0]) >= motion_threshold_acc)
+//            threshCount++;
+//        if (fabsf(sensAvg[avgCounter][1]) >= motion_threshold_gyro)
+//            threshCount++;
+//        if (fabsf(sensAvg[avgCounter][2] - sensAvg[(avgCounter+1) % 2][2]) >= motion_threshold_mag)
+//            threshCount++;
+////        char uartBuf[90] ={0};
+////        snprintf(uartBuf, 90, "%d: %f, %f, %f %f\n", threshCount, sensAvg[avgCounter][0],sensAvg[avgCounter][1],sensAvg[avgCounter][2],sensAvg[(avgCounter+1) % 2][2]);
+////        DEBUG_WRITE("%s", uartBuf);
+//
+//        for (int8_t i = 0; i < 3; i++)
+//            sensAvg[(avgCounter+1) % 2][i] = sensAvg[avgCounter][i];
+//
+//        avgCounter = (avgCounter + 1) % 2;
+//
+//        if (threshCount >=2)
+//            _act = true;
+//        else
+//            _act = false;
+//    }
+//
+//    bufCounter = (bufCounter + 1) % windowSize;
+//}
+//  Calculate energy of the signal for each sensor to detect motion
+void ICM20948::UpdateActivity()
+{
+    const uint8_t windowSize = 20;
+    static float buffer[windowSize][3] = {0};
+    static float enrg[3] = {0};
+    static int8_t bufCounter = 0, noMotionDelay = windowSize, oldMotion = 0;
+
+    enrg[0] -= buffer[bufCounter][0];
+    buffer[bufCounter][0] = _acc[0]*_acc[0] + _acc[1]*_acc[1] + _acc[2]*_acc[2];
+    enrg[0] += buffer[bufCounter][0];
+
+    enrg[1] -= buffer[bufCounter][1];
+    buffer[bufCounter][1] = _gyro[0]*_gyro[0] + _gyro[1]*_gyro[1] + _gyro[2]*_gyro[2];
+    enrg[1] += buffer[bufCounter][1];
+
+    int8_t motion = 0;
+    //   Motion both sensors over the threshold OR
+    //  Either one of them twice the threshold
+    const float acc_energ_thresh = 0.025,
+                gyro_energ_thresh = 10;
+    motion = (enrg[0] > acc_energ_thresh) && (enrg[1] > gyro_energ_thresh);
+    motion |= (enrg[0] > acc_energ_thresh*2) || (enrg[1] > gyro_energ_thresh*2);
+
+//    char uartBuf[90] ={0};
+//    snprintf(uartBuf, 90, "%f,%f,%d", enrg[0], enrg[1], motion);
+//    DEBUG_WRITE("%s", uartBuf);
+
+    //  Once we dip under the threshold, allow the interval of one window
+    //  under the threshold, before concluding there's no motion
+    if ( (oldMotion != motion) && (oldMotion > 0))
+        if (noMotionDelay == 0)
+            noMotionDelay = windowSize;
+        else
+        {
+            noMotionDelay--;
+            motion = oldMotion;
+        }
+
+//    DEBUG_WRITE(",%d\n", motion);
+    _act = motion;
+    oldMotion = motion;
+
+    bufCounter = (bufCounter + 1) % windowSize;
+}
+
+/**
+ * Return the motion status of the device
+ * @return true if device is moving, false otherwise
+ */
+int ICM20948::GetActivity()
+{
+    return _act;
+}
+
+/**
+ * Update gyroscope data
+ * Updates raw gyroscope data by passing it through a median filter (window=3)
+ * @param gyro New gyro data sample
+ */
+void  ICM20948::SetGyroscope(float *gyro)
+{
+    //  Median filter with windows 3 on acceleration
+     static int8_t counter = 0;
+     static float buffer[3][3];
+
+     memcpy((void*)&buffer[counter], (void*)gyro, sizeof(float)*3);
+
+     //  For each axis, go through all 3 members and find median then save
+     //  median into a variable that will be returned as final acceleration
+     for (int8_t axis = 0; axis < 3; axis++)
+         for (int8_t i = counter; i < 6; i++)
+             if ( ((buffer[i%3][axis] >= buffer[(i-1+3)%3][axis]) &&
+                   (buffer[i%3][axis] <= buffer[(i+1)%3][axis])) ||
+                  ((buffer[i%3][axis] <= buffer[(i-1+3)%3][axis]) &&
+                   (buffer[i%3][axis] >= buffer[(i+1)%3][axis])) )
+             {
+                 _gyro[axis] = buffer[i%3][axis];
+                 break;
+             }
+
+     counter = (counter + 1) % 3;
 }
 
 /**

@@ -47,6 +47,8 @@ main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/cstdio
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/stdio.h
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdio.h
 main.obj: G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdarg.h
+main.obj: F:/Programming/ti/TivaWare_C_Series-2.1.4.178/driverlib/interrupt.h
+main.obj: F:/Programming/ti/TivaWare_C_Series-2.1.4.178/driverlib/systick.h
 
 ../main.cpp: 
 ../HAL/hal.h: 
@@ -95,3 +97,5 @@ G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/cstdio:
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/libcxx/stdio.h: 
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdio.h: 
 G:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.8.LTS/include/stdarg.h: 
+F:/Programming/ti/TivaWare_C_Series-2.1.4.178/driverlib/interrupt.h: 
+F:/Programming/ti/TivaWare_C_Series-2.1.4.178/driverlib/systick.h: 

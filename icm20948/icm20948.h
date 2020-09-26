@@ -61,6 +61,12 @@ class ICM20948
         int8_t  ReadSensorData();
         int8_t  RPY(float* RPY, bool inDeg);
         int8_t  Acceleration(float *acc);
+        int8_t  RawAcceleration(float *acc);
+        int8_t  RawAcceleration2(float *acc);
+        void    SetAcceleration(float *acc);
+        void    UpdateActivity();
+        int     GetActivity();
+        void    SetGyroscope(float *gyro);
         int8_t  Gyroscope(float *gyro);
         int8_t  Magnetometer(float *mag);
         int8_t  Gravity(float *gv);
@@ -77,7 +83,7 @@ class ICM20948
         //  Yaw-Pitch-Roll orientation[Y,P,R] in radians
         volatile float _ypr[3];
         //  Acceleration [x,y,z]
-        volatile float _acc[3];
+        volatile float _acc[3], _accRaw[3], _accRaw2[3];
         //  Gyroscope readings [x,y,z]
         volatile float _gyro[3];
         //  Magnetometer readings[x,y,z]
@@ -86,6 +92,7 @@ class ICM20948
         bool _magEn;
         volatile float _quat[4];
         volatile float _gv[3];
+        int _act;
 
 };
 

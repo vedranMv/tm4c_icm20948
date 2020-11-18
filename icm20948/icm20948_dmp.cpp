@@ -72,6 +72,9 @@ static const uint8_t EXPECTED_WHOAMI[] = { 0xEA }; /* WHOAMI value for ICM20948 
 int32_t cfg_acc_fsr = 2; // Default = +/- 4g. Valid ranges: 2, 4, 8, 16
 int32_t cfg_gyr_fsr = 250; // Default = +/- 2000dps. Valid ranges: 250, 500, 1000, 2000
 
+//  Magnetometer bias
+int biasq16[3] = {0};
+
 /*
  * Mounting matrix configuration applied for Accel, Gyro and Mag
  */
@@ -195,7 +198,7 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
         case INV_SENSOR_TYPE_GYROSCOPE:
             memcpy(event.data.gyr.vect, data, sizeof(event.data.gyr.vect));
             memcpy(&(event.data.gyr.accuracy_flag), arg, sizeof(event.data.gyr.accuracy_flag));
-            memcpy(event.data.gyr.vect, (void*)&ICM20948::GetI()._gyro, sizeof(event.data.gyr.vect));
+            memcpy((void*)&ICM20948::GetI()._gyro, event.data.gyr.vect, sizeof(event.data.gyr.vect));
             //  Alternatively, update acceleration data through a median filter
             //  using the call
             //ICM20948::GetI()._SetGyroscope(event.data.gyr.vect);
@@ -210,10 +213,11 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
         case INV_SENSOR_TYPE_LINEAR_ACCELERATION:
             memcpy(event.data.acc.vect, data, sizeof(event.data.acc.vect));
             memcpy(&(event.data.acc.accuracy_flag), arg, sizeof(event.data.acc.accuracy_flag));
-            memcpy(event.data.acc.vect, (void*)&ICM20948::GetI()._acc, sizeof(event.data.acc.vect));
+            memcpy((void*)&ICM20948::GetI()._acc, event.data.acc.vect, sizeof(event.data.acc.vect));
             //  Alternatively, update acceleration data through a median filter
             //  using the call
             //ICM20948::GetI()._SetAcceleration(event.data.acc.vect);
+
             break;
         case INV_SENSOR_TYPE_MAGNETOMETER:
             memcpy(event.data.mag.vect, data, sizeof(event.data.mag.vect));
@@ -258,7 +262,6 @@ void build_sensor_event_data(void * context, inv_icm20948_sensor sensortype, uin
         case INV_SENSOR_TYPE_RAW_ACCELEROMETER:
             memcpy(event.data.raw3d.vect, data, sizeof(event.data.raw3d.vect));
             memcpy(&(event.data.acc.accuracy_flag), arg, sizeof(event.data.acc.accuracy_flag));
-            memcpy((void*)ICM20948::GetI()._accRaw, event.data.acc.vect, sizeof(event.data.acc.vect));
             break;
         case INV_SENSOR_TYPE_RAW_GYROSCOPE:
             memcpy(event.data.raw3d.vect, data, sizeof(event.data.raw3d.vect));
@@ -345,12 +348,11 @@ int8_t ICM20948::SetMagnetometerBias(float biasX, float biasY, float biasZ)
         return MPU_NOT_ALLOWED;
 
     //  Apply compass bias
-    int biasq16[3] = {0};
     biasq16[0] = (int)(biasX*(float)(1L<<16));
     biasq16[1] = (int)(biasY*(float)(1L<<16));
     biasq16[2] = (int)(biasZ*(float)(1L<<16));
 
-    return inv_icm20948_set_bias(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD, biasq16);
+    return MPU_SUCCESS;
 }
 int8_t ICM20948::SetMountingMatrix(float *mountMatrix)
 {
@@ -487,6 +489,8 @@ int8_t ICM20948::InitSW()
     inv_icm20948_set_fsr(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE, (const void *)&cfg_gyr_fsr);
     inv_icm20948_set_fsr(&icm_device, INV_ICM20948_SENSOR_GYROSCOPE_UNCALIBRATED, (const void *)&cfg_gyr_fsr);
 
+    inv_icm20948_set_bias(&icm_device, INV_ICM20948_SENSOR_GEOMAGNETIC_FIELD, biasq16);
+
     /* re-initialize base state structure */
     inv_icm20948_init_structure(&icm_device);
 
@@ -522,7 +526,6 @@ int8_t ICM20948::InitSW()
     DEBUG_WRITE("    Accelerometer: ");
 #endif
     rc = EnableSensor(INV_ICM20948_SENSOR_ACCELEROMETER, 5);
-    rc |= EnableSensor(INV_ICM20948_SENSOR_RAW_ACCELEROMETER, 5);
 #ifdef __DEBUG_SESSION__
     if (rc == 0)
         DEBUG_WRITE("OK\n");
@@ -665,6 +668,9 @@ int8_t ICM20948::ReadSensorData(const float &timestamp)
      return retVal;
 }
 
+///-----------------------------------------------------------------------------
+///                      Data getters                                [PROTECTED]
+///-----------------------------------------------------------------------------
 
 /**
  * Return orientation as RPY angles
@@ -746,29 +752,59 @@ int8_t ICM20948::GetOrientationQuat(OrientationDOF type, float* orientationQuat)
 /**
  * Copy acceleration from internal buffer to user-provided one
  * @param acc Pointer a float array of min. size 3 to store 3-axis acceleration
- *        data
+ *        data. If linear acceleration sensor is enabled, this is pure linear
+ *        acceleration, compensated for the gravity. Otherwise, this is
+ *        uncompensated data including gravity components
  * @return One of MPU_* error codes
  */
-int8_t ICM20948::GetAcceleration(float *acc)
+int8_t ICM20948::GetLinearAcceleration(float *acc)
 {
-    memcpy((void*)acc, (void*)_acc, sizeof(float)*3);
+    memcpy((void*)acc, (void*)_acc, sizeof(_acc));
 
     return MPU_SUCCESS;
 }
 
 /**
- * Copy raw acceleration from internal buffer to a user-provided one
- * Raw acceleration contains gravity
- * @param acc Pointer a float array of min. size 3 to store 3-axis acceleration
- *        data
+ * Copy angular rotation from internal buffer to user-provided one
+ * @param gyro Pointer a float array of min. size 3 to store 3-axis rotation
+ *        data in degrees-per-second
  * @return One of MPU_* error codes
  */
-int8_t ICM20948::GetAccelerationRaw(uint32_t *acc)
+int8_t ICM20948::GetGyroscope(float *gyro)
 {
-    memcpy((void*)acc, (void*)_accRaw, sizeof(_accRaw));
+    memcpy((void*)gyro, (void*)_gyro, sizeof(float)*3);
 
     return MPU_SUCCESS;
 }
+
+/**
+ * Copy mag. field strength from internal buffer to user-provided one
+ * @param mag Pointer a float array of min. size 3 to store 3-axis mag. field
+ *        strength data
+ * @return One of MPU_* error codes
+ */
+int8_t ICM20948::GetMagnetometer(float *mag)
+{
+    memcpy((void*)mag, (void*)_mag, sizeof(float)*3);
+
+    return MPU_SUCCESS;
+}
+
+/**
+ * Copy gravity vector from internal buffer to user-provided one
+ * @param gv Pointer a float array of min. size 3 to store 3D vector data
+ * @return One of MPU_* error codes
+ */
+int8_t ICM20948::GetGravity(float *gv)
+{
+    memcpy((void*)gv, (void*)_gv, sizeof(float)*3);
+
+    return MPU_SUCCESS;
+}
+
+///-----------------------------------------------------------------------------
+///                      Data setters                                [PROTECTED]
+///-----------------------------------------------------------------------------
 
 /**
  * Update accelerometer data by passing it through a median filter (window=23)
@@ -826,44 +862,6 @@ void  ICM20948::_SetGyroscope(float *gyro)
      counter = (counter + 1) % 3;
 }
 
-/**
- * Copy angular rotation from internal buffer to user-provided one
- * @param gyro Pointer a float array of min. size 3 to store 3-axis rotation
- *        data in degrees-per-second
- * @return One of MPU_* error codes
- */
-int8_t ICM20948::GetGyroscope(float *gyro)
-{
-    memcpy((void*)gyro, (void*)_gyro, sizeof(float)*3);
-
-    return MPU_SUCCESS;
-}
-
-/**
- * Copy mag. field strength from internal buffer to user-provided one
- * @param mag Pointer a float array of min. size 3 to store 3-axis mag. field
- *        strength data
- * @return One of MPU_* error codes
- */
-int8_t ICM20948::GetMagnetometer(float *mag)
-{
-    memcpy((void*)mag, (void*)_mag, sizeof(float)*3);
-
-    return MPU_SUCCESS;
-}
-
-/**
- * Copy gravity vector from internal buffer to user-provided one
- * @param gv Pointer a float array of min. size 3 to store 3D vector data
- * @return One of MPU_* error codes
- */
-int8_t ICM20948::GetGravity(float *gv)
-{
-    memcpy((void*)gv, (void*)_gv, sizeof(float)*3);
-
-    return MPU_SUCCESS;
-}
-
 
 ///-----------------------------------------------------------------------------
 ///                      Class constructor & destructor              [PROTECTED]
@@ -873,7 +871,6 @@ ICM20948::ICM20948(): _initialized(false), _quat9DOFaccuracy(0.0), _quat6DOFaccu
 {
     //  Initialize arrays
     memset((void*)_acc, 0, sizeof(_acc));
-    memset((void*)_accRaw, 0, sizeof(_accRaw));
     memset((void*)_gyro, 0, sizeof(_gyro));
     memset((void*)_mag, 0, sizeof(_mag));
     memset((void*)_gv, 0, sizeof(_gv));

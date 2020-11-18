@@ -2,3 +2,11 @@ Debug/*
 !.gitignore
 /Debug/
 Debug
+.ccsproject
+.cproject
+.launches3/
+.project
+.settings/
+targetConfigs/
+tm4c1294ncpdt.cmd
+tm4c1294ncpdt_startup_ccs.c

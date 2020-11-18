@@ -1,79 +1,53 @@
-MPU9250 on Tiva TM4C1294
+ICM-20948 on Tiva TM4C1294
 ======================
 
 
-This repository contains an example project for running MPU9250 IMU module with TM4C1294 microcontroller. __Note__ that the project is for CodeComposer studio. MPU9250 is implemented as C++ singleton.
-
-Code is taken from a [bigger project I worked on](https://github.com/vedranMv/roverRPi3)  and can be integrated with other modules from there (task scheduler and event logger). For clarity those were removed from this example but feel free to check the repository to find out more about them. Event logger allows for tacking the state of a module by tracking chronologically the most common events and their source (_startup_, _initialization_, _error_, etc.). Task scheduler on the other hand, is a simple run-to-completion scheduler that allows one to execute a sequence of tasks based on their starting time.
+This repository contains an example project for running ICM-20948 IMU module with TM4C1294 microcontroller.
 
 ## Functionality
 
-This library allows one to connect MPU9250 to TM4C1294 mcu over either SPI or I2C. Choosing the communication protocol is done through ``hwconfig.h`` file. Softwarewise, this library supports running the MPU in either the standard way where one read sensor values directly OR with the DMP firmware on-board. Again, use ``hwconfig.h`` to configure whether which version to use.
+* Communication over SPI only
+* Original DMP firmware with 9DOF sensor fusion
+* Reading back orientation (from 6DOf or 9DOF fusion algorithm), linear acceleration or angular velocity
+* ICM-20948 class is implemented as C++ singleton (since it depends on HW interface)
 
 #### DMP
-DMP firmware was released by the InvenSense and can perform 6DOF sensor fusion to compute the quaternions from which it is possible to find commonly used Euler angles. Sadly, DMP doesn't take into consideration magnetometer so, depending on the application it might not be suitable.
 
-#### Direct sensor readings
-Reading direct sensor values from MPUs' registers is the most common way of operation. Registers and their content are described in the official [register map](https://store.invensense.com/Datasheets/invensense/RM-MPU-9150A-00-v3.0.pdf). This library then integrates Mahonys' algorithm for calculating quaternions in as a way of performing 9DOF sensor fusion and estimating the attitude of the sensor.
+DMP firmware was released by the InvenSense and can perform 9DOF sensor fusion to compute the quaternions from which it is possible to find commonly used Euler angles. It supports on-chip 6DOF or 9DOF sensor fusion, in addition to providing gravity vector, linear acceleration and angular velocity. Output rate of the fusion algorithm is currently set to 200Hz (can be increased to 225Hz according to documentation).
 
-## Wiring in I2C mode
-
-MPU9250 can be connected to I2C2 peripheral of Tiva evaluation kit as follows:
-
-
-MPU9250       |   EK-TM4C1294XL
---------------|------------------
-MPU9250 SDA   | PN4(I2C2SDA)
-MPU9250 SCL   | PN5(I2C2SCL)
-MPU9250 INT   | PA5(GPIO)
-MPU9250 AD0   | GND
-MPU9250 VCC   | 3.3V
-MPU9250 GND   | GND
-
-I2C2 is used in high-speed mode, 400kHz clock. Additionally, library implements power control functionality through pin PL4. It is meant to control external n-type MOSFET to cut the power to MPU9250. Power control signal is designed as active-high, cutting the power to MPU9250 when it's set low.
+General flow when using the DMP library is to configure the sensors (accelerometer, gyro, magnetometer), flash DMP firmware, then enable the desired output and its sampling rate.
 
 
 ## Wiring in SPI mode
 
-MPU9250 can be connected to SPI2 peripheral of Tiva evaluation kit as follows:
+ICM-20948 can be connected to SPI2 peripheral of Tiva evaluation kit as follows:
 
-MPU9250       |   EK-TM4C1294XL
---------------|------------------
-MPU9250 SDA   | PD1(SPI2MOSI)
-MPU9250 SCL   | PD3(SPI2CLK)
-MPU9250 INT   | PA5(GPIO)
-MPU9250 AD0   | PD0(SPI2MOSI)
-MPU9250 NCS   | PN2(GPIO used as slave select)
-MPU9250 VCC   | 3.3V
-MPU9250 GND  | GND
+ICM-20948       |   EK-TM4C1294XL
+----------------|------------------
+ICM-20948 SDA   | PD1(SPI2MOSI)
+ICM-20948 SCL   | PD3(SPI2CLK)
+ICM-20948 INT   | PA5(GPIO)
+ICM-20948 AD0   | PD0(SPI2MOSI)
+ICM-20948 NCS   | PN2(GPIO used as slave select)
+ICM-20948 VCC   | 3.3V
+ICM-20948 GND   | GND
 
-Speed of SPI transfer is set to 1MHz. (sidenote: I have successfully tested up to 60MHz with TM4C1294 after which Tiva cannot generate the clock any more) Additionally, library implements power control functionality through pin PL4. It is meant to control external n-type MOSFET to cut the power to MPU9250. Power control signal is designed as active-high, cutting the power to MPU9250 when it's set low.
+Speed of SPI transfer is set to 1MHz. Additionally, this example uses power control functionality through pin PL4. It is meant to control an external n-type MOSFET to cut the power to ICM-20948. Power control signal is designed as active-high, cutting the power to ICM-20948 when it's set low.
 
-
-## Library
-
-MPU9250 library provided in this example is implemented in C++ and based on the singleton design approach. At the beginning of the program, user grabs the reference to the instance of a singleton and uses it through the rest of the program.
-
-#### DMP mode
-
-![alt tag](https://vedran.ml/public/images/DMP.png)
-
-DMP mode uses InvenSense code to load the DMP firmware on startup and use its sensor fusion for estimating the orientation. Output rate of fusion algorithm is set to 50Hz (can be increased to 200Hz) and the code handles conversion from quaternions to Euler angles.
-
-#### Direct-sensor-reading mode
-
-![alt tag](https://vedran.ml/public/images/DSR.png)
-
-Basic functionality is implemented in form of configuring accelerometer and gyro for 1kHz output rate, performing accelerometer and gyro calibration. Current software interface is rather simplistic and allows for reading direct sensor measurements, reboot the MPU and control its power supply. Furthermore, as mentioned above, [Mahonys' algorithm](https://github.com/PaulStoffregen/MahonyAHRS) is implemented to perform 9DOF sensor fusion and produce orientation. Core functionality of Direct-sensor-reading mode is ported from [SparkFuns' MPU9250 library](https://github.com/sparkfun/SparkFun_MPU-9250_Breakout_Arduino_Library) (but extended with SPI).
-
-
-At this point there is __no__ magnetometer calibration functionality implemented for any of the modes.
 
 ## Example code
 
-``main.cpp`` contains a simple example which demonstrates initialization of the sensor, and a loop which reads sensor data at roughly 1kHz, computes orientation and prints it through serial port.
+``main.cpp`` contains a simple example which demonstrates initialization of the sensor, and two blocks of code showing how to get orientation, or acceleration and gyroscope measurements. The remainder of the library can be found in ``icm20948/`` folder.
+
+To use it in your project, copy folders ``icm20948/``, ``libs/``, ``HAL/`` and a file ``hwconfig.h``. To use on a different platform, refer to the section below. 
 
 
 ## Porting the library
 
 Even though the library was developed and tested on TM4C1294 the functional code is fully decoupled from hardware through the use of Hardware Abstraction Layer (HAL). If you want to experiment with support for other board simply create new folder in ``HAL/``, add in the same files as in ``HAL/tm4c1294/``. Keep interface of new HAL the same as that in ``HAL/tm4c1294/``, i.e. use same function names as those in header files ``HAL/tm4c1294/*.h``. Main HAL include file, ``HAL/hal.h``, then uses macros to select the right board and load appropriate board drivers.
+
+## Testing the IMU
+
+Give a try to my other project which I developed while working on this library: [Data dashboard](https://github.com/vedranMv/dataDashboard). A QT-based dashboard for visualizing real-time data.
+
+![alt tag](https://cdn.hackaday.io/images/7187981605656673038.PNG)

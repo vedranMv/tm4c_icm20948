@@ -39,6 +39,7 @@ extern "C" {
  */
 int main(void)
 {
+    int8_t rc = 0;
     //  Mounting matrix describing transformation between IMU reference frame
     //  and a mounting pose
     float mountMatrix[9]= {
@@ -74,8 +75,53 @@ int main(void)
     //  (load DMP firmware and enable all the sensors)
     imu.InitSW();
 
-    float data[3];
+    //
+    //  DMP has been loaded, enable the sensors
+    //
 
+    rc = imu.EnableSensor(INV_ICM20948_SENSOR_GYROSCOPE, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+#endif
+    //  6DOF sensor fusion
+    rc = imu.EnableSensor(INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    Linear acceleration: ");
+#endif
+    rc = imu.EnableSensor(INV_ICM20948_SENSOR_LINEAR_ACCELERATION, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    9DOF fusion: ");
+#endif
+    //  9DOF sensor fusion
+    rc = imu.EnableSensor(INV_ICM20948_SENSOR_ROTATION_VECTOR, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    Gravity vector: ");
+#endif
+    rc = imu.EnableSensor(INV_ICM20948_SENSOR_GRAVITY, 5);
+#ifdef __DEBUG_SESSION__
+    if (rc == 0)
+        DEBUG_WRITE("OK\n");
+    else
+        DEBUG_WRITE("ERR\n");
+    DEBUG_WRITE("    Gravity vector: ");
+#endif
+
+    float data[3];
     while (1)
     {
         //  Check if IMU toggled interrupt pin
@@ -88,18 +134,18 @@ int main(void)
             imu.ReadSensorData(timestamp);
 
             //  Read and print orientation as reported by the 6DOF and 9DOF fusion
-//            imu.GetOrientationRPY(Orientation6DOF, data, true);
-//            snprintf(buffer, 160, "%f,%f,%f",data[0],data[1],data[2]);
-//            imu.GetOrientationRPY(Orientation9DOF, data, true);
-//            snprintf(buffer, 160, "%s,%f,%f,%f",buffer, data[0],data[1],data[2]);
-//            DEBUG_WRITE("%s\n", buffer);
+            imu.GetOrientationRPY(Orientation6DOF, data, true);
+            snprintf(buffer, 160, "%f,%f,%f",data[0],data[1],data[2]);
+            imu.GetOrientationRPY(Orientation9DOF, data, true);
+            snprintf(buffer, 160, "%s,%f,%f,%f",buffer, data[0],data[1],data[2]);
+            DEBUG_WRITE("%s\n", buffer);
 
             //  Read acceleration and angular velocity
             imu.GetLinearAcceleration(data);
             snprintf(buffer, 160, "%f,%f,%f",data[0],data[1],data[2]);
             imu.GetGyroscope(data);
             snprintf(buffer, 160, "%s,%f,%f,%f",buffer, data[0],data[1],data[2]);
-            DEBUG_WRITE("%s\n", buffer);
+            DEBUG_WRITE("%s\n\n", buffer);
 
         }
 

@@ -8,7 +8,7 @@ This repository contains an example project for running ICM-20948 IMU module wit
 
 * Communication over SPI only
 * Original DMP firmware with 9DOF sensor fusion
-* Reading back orientation (from 6DOf or 9DOF fusion algorithm), linear acceleration or angular velocity
+* Reading back orientation (from 6DOF or 9DOF fusion algorithm), linear acceleration or angular velocity
 * ICM-20948 class is implemented as C++ singleton (since it depends on HW interface)
 
 #### DMP

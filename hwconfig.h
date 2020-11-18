@@ -41,7 +41,7 @@
 
     //  Select operating mode - use either one of these two
     //  Operating mode can be with raw sensor values or using DMP firmware
-    //#define __HAL_USE_MPU9250_NODMP__
+    //#define __HAL_USE_ICM20948_NODMP__
     #define __HAL_USE_ICM20948_DMP__
 #endif
 

@@ -134,7 +134,7 @@ class LinkedList
         float popFront()
         {
             //  Checl if list is empty
-            if (LinkedList::empty()) return;
+            if (LinkedList::empty()) return-1.0;
             //  Check ifthere's only one element in this list
             if (head == tail) tail = nullptr;
             //  Extract data from node before it's deleted

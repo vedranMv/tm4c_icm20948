@@ -230,8 +230,8 @@ int inv_icm20948_initialize_lower_driver(struct inv_icm20948 * s, enum SMARTSENS
 	/* secondary cycle mode should be set all the time */
 	data = BIT_I2C_MST_CYCLE|BIT_ACCEL_CYCLE|BIT_GYRO_CYCLE;
 
-	// Set default mode to low power mode
-	result |= inv_icm20948_set_lowpower_or_highperformance(s, 0);
+	// Set default mode to low power mode (Vmi:changed to low noise)
+	result |= inv_icm20948_set_lowpower_or_highperformance(s, 1);
 	
 	// Disable Ivory DMP.
 	if(s->base_state.serial_interface == SERIAL_INTERFACE_SPI)   
